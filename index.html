@@ -1,0 +1,423 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex">
+<title>面談思考マップ</title>
+<meta name="description" content="保健指導の面談で、着目する生活習慣→掘り下げる点→情報提供→行動変容ステージ別の目標例を、左から右へ樹状にたどるツール。">
+<style>
+/* ============================================================
+   HealthGuidanceEvaluator と同じ Apple ダークパレット
+   （sidebar_person.html の :root と揃える）
+   ============================================================ */
+:root{
+  --ink:#f5f5f7; --sub:#98989d; --line:rgba(255,255,255,.12); --bg:#2c2c2e;
+  --body:#1c1c1e; --panel:#232325; --field:rgba(120,120,128,.16);
+  --blue:#0a84ff; --bluebg:rgba(10,132,255,.16); --red:#ff453a; --redbg:rgba(255,69,58,.15);
+  --green:#30d158; --greenbg:rgba(48,209,88,.15); --amber:#ff9f0a; --amberbg:rgba(255,159,10,.15);
+  --teal:#64d2ff; --focusbg:rgba(10,132,255,.09); --focusline:rgba(10,132,255,.4);
+  --col1:188px; --col2:220px; --col3:250px;
+}
+*{box-sizing:border-box}
+html,body{height:100%}
+body{font-family:-apple-system,"Hiragino Kaku Gothic ProN","Hiragino Sans",sans-serif;
+  color:var(--ink); margin:0; font-size:13px; background:var(--body); line-height:1.6;
+  -webkit-font-smoothing:antialiased; display:flex; flex-direction:column;}
+button{font-family:inherit}
+a{color:var(--teal)}
+svg.ic{width:14px; height:14px; flex:none}
+
+/* ---- ヘッダー ---- */
+#hd{display:flex; align-items:center; gap:10px; flex-wrap:wrap; padding:10px 16px;
+  background:rgba(28,28,30,.85); -webkit-backdrop-filter:blur(20px) saturate(180%);
+  backdrop-filter:blur(20px) saturate(180%); border-bottom:1px solid var(--line);
+  position:sticky; top:0; z-index:5;}
+#hd h1{font-size:15px; font-weight:700; margin:0; letter-spacing:-.01em; white-space:nowrap}
+#hd .codebox{display:flex; gap:6px; align-items:center; flex:1 1 320px; max-width:560px}
+#code{flex:1; min-width:0; background:var(--field); border:1px solid transparent; color:var(--ink);
+  border-radius:8px; padding:6px 10px; font-size:12px; font-family:ui-monospace,Menlo,monospace}
+#code:focus{outline:none; border-color:var(--focusline); background:var(--focusbg)}
+#code::placeholder{color:var(--sub); font-family:-apple-system,"Hiragino Kaku Gothic ProN",sans-serif}
+.btn{border:none; border-radius:7px; padding:6px 11px; font-size:11.5px; font-weight:600;
+  cursor:pointer; background:var(--field); color:var(--ink); display:inline-flex; align-items:center; gap:5px;
+  transition:transform .1s ease-out, background .18s ease, color .18s ease; white-space:nowrap}
+.btn:hover{background:var(--bluebg); color:var(--blue)}
+.btn:active{transform:scale(.95)}
+.btn.primary{background:var(--blue); color:#fff}
+.btn.primary:hover{background:#3a9bff; color:#fff}
+.btn.sm{padding:3px 8px; font-size:10.5px; border-radius:6px}
+.btn.done{background:var(--greenbg); color:var(--green)}
+#who{display:flex; gap:5px; flex-wrap:wrap; align-items:center; font-size:11px; color:var(--sub); flex:1 1 100%}
+#who:empty{display:none}
+.chip{display:inline-block; background:var(--bg); color:var(--ink); border-radius:999px;
+  padding:1px 8px; font-size:10.5px; white-space:nowrap}
+.chip.hi{background:var(--redbg); color:#ff8a82}
+.chip.lo{background:var(--bluebg); color:#7fbfff}
+.chip.dis{background:var(--amberbg); color:var(--amber)}
+.chip.pend{background:var(--field); color:var(--sub)}
+#msg{font-size:11px; color:var(--red)}
+#msg.ok{color:var(--green)}
+
+/* ---- パンくず（思考の道筋） ---- */
+#path{display:flex; align-items:center; gap:4px; flex-wrap:wrap; padding:8px 16px 0; font-size:12px; color:var(--sub); min-height:28px}
+#path .step{color:var(--ink); background:var(--bg); border:none; border-radius:999px; padding:2px 10px; cursor:pointer; font-size:11.5px}
+#path .step:hover{background:var(--bluebg); color:var(--blue)}
+#path .sep{opacity:.5}
+#path .hint{font-size:11.5px}
+
+/* ---- ツリー（左→右） ---- */
+#stage{flex:1; overflow:auto; position:relative; padding:10px 16px 24px}
+#tree{position:relative; display:flex; gap:44px; align-items:flex-start; min-width:max-content}
+#wires{position:absolute; left:0; top:0; pointer-events:none; overflow:visible}
+#wires path{fill:none; stroke:rgba(255,255,255,.3); stroke-width:1.5}
+#wires path.on{stroke:var(--blue); stroke-width:2.2}
+#wires path.act{stroke:rgba(255,159,10,.6)}
+#wires path.dim{stroke:rgba(255,255,255,.1)}
+.col{display:flex; flex-direction:column; gap:7px; position:relative; z-index:1}
+.col.c1{width:var(--col1)} .col.c2{width:var(--col2)} .col.c3{width:var(--col3)}
+.colttl{font-size:10.5px; color:var(--sub); letter-spacing:.06em; padding:0 2px 2px}
+.node{all:unset; box-sizing:border-box; display:block; cursor:pointer; background:var(--panel);
+  border:1px solid var(--line); border-radius:11px; padding:8px 11px; position:relative;
+  transition:background .15s ease, border-color .15s ease, opacity .15s ease, transform .1s ease-out}
+.node:hover{background:var(--bg)}
+.node:active{transform:scale(.985)}
+.node:focus-visible{outline:2px solid var(--focusline); outline-offset:2px}
+.node.sel{border-color:var(--blue); background:var(--focusbg)}
+.node .nm{font-size:13px; font-weight:600; display:flex; align-items:center; gap:7px}
+.node .nm .no{font-size:10.5px; color:var(--sub); font-weight:500; min-width:14px}
+.node .nm .cnt{margin-left:auto; font-size:10.5px; color:var(--sub); font-weight:500}
+.node .why{display:flex; flex-wrap:wrap; gap:3px; margin-top:5px}
+.node .why:empty{display:none}
+.node .why .chip{font-size:10px; padding:0 7px}
+.node.c3n .nm{font-weight:500; font-size:12.5px; line-height:1.5}
+/* 判定: 関係あり＝左に色の帯／要聴取＝点線／関係なし＝グレーアウト（押せる） */
+.node.act::before{content:""; position:absolute; left:-1px; top:8px; bottom:8px; width:3px; border-radius:3px; background:var(--amber)}
+.node.pend{border-style:dashed}
+.node.off{opacity:.36}
+.node.off:hover{opacity:.7}
+.legend{display:flex; gap:12px; flex-wrap:wrap; font-size:10.5px; color:var(--sub); padding:0 16px}
+.legend[hidden]{display:none}
+.legend span{display:inline-flex; align-items:center; gap:5px}
+.legend i{display:inline-block; width:14px; height:10px; border-radius:3px; border:1px solid var(--line); background:var(--panel)}
+.legend i.a{border-left:3px solid var(--amber)} .legend i.p{border-style:dashed} .legend i.o{opacity:.36}
+
+/* ---- 詳細パネル（列4） ---- */
+.detail{width:min(560px, calc(100vw - 48px)); background:var(--panel); border:1px solid var(--line);
+  border-radius:14px; padding:14px 16px 16px; position:relative; z-index:1}
+.detail h2{font-size:15px; margin:0 0 2px; letter-spacing:-.01em}
+.detail .crumb{font-size:11px; color:var(--sub); margin-bottom:10px}
+.sec{margin-top:14px}
+.sec:first-of-type{margin-top:4px}
+.sechd{display:flex; align-items:center; gap:8px; font-size:11px; font-weight:700; color:var(--sub); letter-spacing:.06em; margin-bottom:6px}
+.sechd .btn{margin-left:auto}
+.info{background:var(--bg); border-radius:10px; padding:10px 12px; font-size:12.5px; line-height:1.85; white-space:pre-wrap}
+.fig{background:#f5f5f7; border-radius:10px; padding:8px; text-align:center}
+.fig img{width:100%; max-width:560px; height:auto; display:block; margin:0 auto}
+.fig .cap{color:#3a3a3c; font-size:10.5px; margin-top:4px}
+.srcs{margin:0; padding:0; list-style:none; display:flex; flex-direction:column; gap:4px}
+.srcs a{display:flex; gap:6px; align-items:flex-start; text-decoration:none; color:var(--teal); font-size:12px; line-height:1.5}
+.srcs a:hover{text-decoration:underline}
+.srcs a svg{margin-top:2px}
+.srcs .pub{color:var(--sub); font-size:10.5px}
+.tabs{display:flex; gap:2px; background:var(--field); border-radius:9px; padding:2px; margin-bottom:8px}
+.tab{flex:1; border:none; background:transparent; color:var(--sub); font-size:11.5px; font-weight:600;
+  padding:5px 2px; border-radius:7px; cursor:pointer; position:relative}
+.tab:hover{color:var(--ink)}
+.tab.on{background:var(--bg); color:var(--ink); box-shadow:0 1px 3px rgba(0,0,0,.35)}
+.tab .me{position:absolute; top:-5px; right:3px; font-size:8.5px; background:var(--amber); color:#1c1c1e; border-radius:999px; padding:0 4px; line-height:1.5}
+.stagenote{font-size:11px; color:var(--sub); margin:0 0 6px; line-height:1.6}
+.goals{list-style:none; margin:0; padding:0; display:flex; flex-direction:column; gap:5px}
+.goals li{display:flex; gap:8px; align-items:flex-start; background:var(--bg); border-radius:9px; padding:7px 8px 7px 11px; font-size:12.5px; line-height:1.65}
+.goals li span{flex:1}
+.empty{color:var(--sub); font-size:12px; padding:6px 0}
+#toast{position:fixed; bottom:18px; left:50%; transform:translateX(-50%) translateY(20px); opacity:0;
+  background:rgba(44,44,46,.95); color:var(--ink); padding:7px 14px; border-radius:999px; font-size:12px;
+  transition:opacity .2s ease, transform .2s ease; pointer-events:none; z-index:10}
+#toast.on{opacity:1; transform:translateX(-50%) translateY(0)}
+@media (prefers-reduced-motion: reduce){ *{transition:none !important} }
+@media (max-width:720px){ :root{--col1:150px; --col2:180px; --col3:210px} #tree{gap:28px} }
+</style>
+</head>
+<body>
+<header id="hd">
+  <h1>面談思考マップ</h1>
+  <div class="codebox">
+    <input id="code" type="text" spellcheck="false" autocomplete="off"
+      placeholder="対象者ビューの「思考マップ用コード」を貼り付け" aria-label="思考マップ用コード">
+    <button class="btn primary" id="apply">反映</button>
+    <button class="btn" id="clear" title="対象者の反映を外して全項目を表示">解除</button>
+  </div>
+  <span id="msg" role="status"></span>
+  <div id="who"></div>
+</header>
+<div id="path"></div>
+<div class="legend" id="legend" hidden>
+  <span><i class="a"></i>この対象者に関係あり</span>
+  <span><i class="p"></i>要聴取（未聴取の項目あり）</span>
+  <span><i class="o"></i>関係なし（押せば見られる）</span>
+</div>
+<main id="stage"><div id="tree"></div></main>
+<div id="toast"></div>
+
+<!-- 収録内容（大項目ごと）。並びがそのまま画面の並びになる -->
+<script src="data/core.js"></script>
+<script src="data/01-medication.js"></script>
+<script src="data/02-self-monitoring.js"></script>
+<script src="data/03-weight.js"></script>
+<script src="data/04-exercise.js"></script>
+<script src="data/05-diet.js"></script>
+<script src="data/06-salt.js"></script>
+<script src="data/07-alcohol.js"></script>
+<script src="data/08-smoking.js"></script>
+<script src="data/09-sleep.js"></script>
+<script src="data/10-stress.js"></script>
+<script src="data/rules.js"></script>
+<script>
+(function(){
+  'use strict';
+  var STAGES = GM.STAGES;
+  var STAGE_NOTE = {
+    '無関心期':'6か月以内に変えるつもりがない。目標は「知る・気づく」まで。押し付けず、関心のある話題から情報提供する。',
+    '関心期':'変えたい気持ちはあるが迷っている。利点と負担を一緒に整理し、小さく試せる目標にする。',
+    '準備期':'1か月以内に始めるつもり。いつ・何を・どれだけを決め、記録の方法もセットにする。',
+    '実行期':'始めて6か月未満。続けるための工夫と、崩れたときの立て直し方を目標にする。',
+    '維持期':'6か月以上続いている。逆戻りの場面を想定し、次の段階や自己管理の定着を目標にする。'
+  };
+
+  /* ---------- 小道具 ---------- */
+  var SVGH = '<svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">';
+  var IC = {
+    copy: SVGH+'<rect x="9" y="9" width="11" height="11" rx="2"></rect><path d="M5 15V5a2 2 0 0 1 2-2h10"></path></svg>',
+    check: SVGH+'<path d="M5 12l5 5L20 7"></path></svg>',
+    ext: SVGH+'<path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><path d="M15 3h6v6"></path><path d="M10 14 21 3"></path></svg>',
+    chev: '<svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:11px;height:11px"><path d="M9 6l6 6-6 6"></path></svg>'
+  };
+  function esc(s){ return String(s==null?'':s).replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];}); }
+  function $(id){ return document.getElementById(id); }
+  var toastT=null;
+  function toast(m){ var t=$('toast'); t.textContent=m; t.classList.add('on'); clearTimeout(toastT); toastT=setTimeout(function(){t.classList.remove('on');},1600); }
+  function copyText(text, btn){
+    function ok(){ toast('コピーしました'); if(btn){ var h=btn.innerHTML; btn.classList.add('done'); btn.innerHTML=IC.check+(btn.dataset.lbl?'コピー済み':''); setTimeout(function(){btn.classList.remove('done'); btn.innerHTML=h;},1400);} }
+    function fallback(){
+      var ta=document.createElement('textarea'); ta.value=text; ta.style.position='fixed'; ta.style.opacity='0';
+      document.body.appendChild(ta); ta.select();
+      try{ document.execCommand('copy'); ok(); }catch(e){ toast('コピーできませんでした'); }
+      document.body.removeChild(ta);
+    }
+    if(navigator.clipboard && window.isSecureContext){ navigator.clipboard.writeText(text).then(ok, fallback); }
+    else fallback();
+  }
+
+  /* ---------- 状態 ---------- */
+  var S = { cat:null, mid:null, small:null, stage:null, person:null, judge:null };
+
+  /* ---------- 専用コード（HGM1.＋deflate-raw＋base64url）---------- */
+  function b64urlToBytes(s){
+    s=s.replace(/-/g,'+').replace(/_/g,'/'); while(s.length%4) s+='=';
+    var bin=atob(s), a=new Uint8Array(bin.length);
+    for(var i=0;i<bin.length;i++) a[i]=bin.charCodeAt(i);
+    return a;
+  }
+  function decodeCode(code){
+    code=String(code||'').trim().replace(/^.*#c=/,'').replace(/\s+/g,'');
+    if(!/^HGM1\./.test(code)) return Promise.reject(new Error('コードの形式が違います（HGM1. で始まるコードを貼ってください）'));
+    var bytes;
+    try{ bytes=b64urlToBytes(code.slice(5)); }catch(e){ return Promise.reject(new Error('コードが途中で切れているようです')); }
+    if(typeof DecompressionStream==='undefined') return Promise.reject(new Error('このブラウザは展開に対応していません（Chrome/Edge/Safari の最新版で開いてください）'));
+    var ds=new DecompressionStream('deflate-raw');
+    var stream=new Blob([bytes]).stream().pipeThrough(ds);
+    return new Response(stream).text().then(function(t){ var o=JSON.parse(t); if(!o||o.v!==1) throw new Error('コードの版が違います'); return o; })
+      .catch(function(e){ throw new Error(e && /版/.test(e.message)?e.message:'コードを読み取れませんでした（コピー漏れがないか確認してください）'); });
+  }
+
+  function applyPerson(p){
+    S.person=p; S.judge=p?GM.judge(p):null;
+    renderWho(); render();
+  }
+  function renderWho(){
+    var w=$('who'), p=S.person;
+    $('legend').hidden=!p;
+    if(!p){ w.innerHTML=''; return; }
+    var h='<span>反映中:</span><span class="chip">ID '+esc(p.id||'—')+'</span>';
+    if(p.sex) h+='<span class="chip">'+esc(p.sex)+'</span>';
+    (p.dis||[]).forEach(function(d){ h+='<span class="chip dis">'+esc(d)+'</span>'; });
+    if((p.med||[]).length) h+='<span class="chip">服薬 '+esc(p.med.join('・'))+'</span>';
+    Object.keys(p.lab||{}).forEach(function(k){
+      var v=p.lab[k]; if(!v||!v[1]||v[1]==='ok') return;
+      h+='<span class="chip '+(v[1]==='high'?'hi':'lo')+'">'+esc(GM.LAB_NAMES[k]||k)+' '+esc(v[0])+'</span>';
+    });
+    w.innerHTML=h;
+  }
+
+  /* ---------- 判定の参照 ---------- */
+  function st(kind, id){  // {s:'act'|'pend'|'off'|'', why:[]}
+    if(!S.judge) return {s:'', why:[]};
+    var j=S.judge[kind][id]; return j||{s:'off', why:[]};
+  }
+  function whyHtml(j){
+    return (j.why||[]).slice(0,4).map(function(r){
+      var cls=r.k==='lab'?'hi':r.k==='dis'?'dis':r.k==='pend'?'pend':'';
+      return '<span class="chip '+cls+'">'+esc(r.t)+'</span>';
+    }).join('');
+  }
+  function nodeHtml(kind, id, inner, sel, extraCls){
+    var j=st(kind,id);
+    return '<button class="node '+(extraCls||'')+' '+(j.s||'')+(sel?' sel':'')+'" data-k="'+kind+'" data-id="'+esc(id)+'">'
+      +inner+'<div class="why">'+whyHtml(j)+'</div></button>';
+  }
+
+  /* ---------- 描画 ---------- */
+  function findCat(k){ return GM.cats.filter(function(c){return c.key===k;})[0]||null; }
+  function findMid(c,id){ return c && c.mids.filter(function(m){return m.id===id;})[0]||null; }
+  function findSmall(m,id){ return m && m.smalls.filter(function(s){return s.id===id;})[0]||null; }
+
+  function render(){
+    var cat=findCat(S.cat), mid=findMid(cat,S.mid), sm=findSmall(mid,S.small);
+    var h='<svg id="wires"></svg>';
+    h+='<div class="col c1"><div class="colttl">大項目</div>';
+    GM.cats.forEach(function(c,i){
+      h+=nodeHtml('cat', c.key, '<div class="nm"><span class="no">'+(i+1)+'</span>'+esc(c.name)+'<span class="cnt">'+c.mids.length+'</span></div>', S.cat===c.key);
+    });
+    h+='</div>';
+    if(cat){
+      h+='<div class="col c2"><div class="colttl">中項目（掘り下げる点）</div>';
+      cat.mids.forEach(function(m){
+        h+=nodeHtml('mid', cat.key+'/'+m.id, '<div class="nm">'+esc(m.name)+'<span class="cnt">'+m.smalls.length+'</span></div>', S.mid===m.id);
+      });
+      h+='</div>';
+    }
+    if(mid){
+      h+='<div class="col c3"><div class="colttl">小項目（情報提供・リスク）</div>';
+      mid.smalls.forEach(function(s){
+        h+='<button class="node c3n'+(S.small===s.id?' sel':'')+'" data-k="small" data-id="'+esc(s.id)+'"><div class="nm">'+esc(s.title)+'</div></button>';
+      });
+      h+='</div>';
+    }
+    if(sm) h+=detailHtml(cat, mid, sm);
+    $('tree').innerHTML=h;
+    renderPath(cat, mid, sm);
+    requestAnimationFrame(drawWires);
+  }
+
+  function detailHtml(cat, mid, sm){
+    var j=st('cat',cat.key);
+    var pStage=S.judge && S.judge.stage[cat.key];
+    var stage=S.stage||pStage||'関心期';
+    var h='<section class="detail" id="detail" aria-label="詳細">';
+    h+='<h2>'+esc(sm.title)+'</h2><div class="crumb">'+esc(cat.name)+' › '+esc(mid.name)+'</div>';
+    h+='<div class="sec"><div class="sechd">情報提供<button class="btn sm" data-copy="info" data-lbl="1">'+IC.copy+'コピー</button></div>'
+      +'<div class="info">'+esc(sm.info)+'</div></div>';
+    if(sm.figure){
+      h+='<div class="sec"><div class="sechd">図説</div><div class="fig"><img src="'+esc(sm.figure)+'" alt="'+esc(sm.figCap||sm.title)+'" loading="lazy">'
+        +(sm.figCap?'<div class="cap">'+esc(sm.figCap)+'</div>':'')+'</div></div>';
+    }
+    h+='<div class="sec"><div class="sechd">目標例（行動変容ステージ別）<button class="btn sm" data-copy="goals" data-lbl="1">'+IC.copy+'このステージを全部</button></div>';
+    h+='<div class="tabs" role="tablist">'+STAGES.map(function(s){
+      return '<button class="tab'+(s===stage?' on':'')+'" role="tab" aria-selected="'+(s===stage)+'" data-stage="'+s+'">'+s+(s===pStage?'<span class="me">対象者</span>':'')+'</button>';
+    }).join('')+'</div>';
+    h+='<p class="stagenote">'+esc(STAGE_NOTE[stage])+'</p>';
+    var gs=(sm.goals&&sm.goals[stage])||[];
+    h+=gs.length?'<ul class="goals">'+gs.map(function(g,i){
+      return '<li><span>'+esc(g)+'</span><button class="btn sm" data-copy="goal" data-i="'+i+'" title="この目標をコピー">'+IC.copy+'</button></li>';
+    }).join('')+'</ul>':'<div class="empty">このステージの目標例はまだありません。</div>';
+    h+='</div>';
+    if(sm.sources&&sm.sources.length){
+      h+='<div class="sec"><div class="sechd">出典</div><ul class="srcs">'+sm.sources.map(function(s){
+        return '<li><a href="'+esc(s.url)+'" target="_blank" rel="noopener">'+IC.ext+'<span>'+esc(s.title)
+          +(s.pub?' <span class="pub">'+esc(s.pub)+'</span>':'')+'</span></a></li>';
+      }).join('')+'</ul></div>';
+    }
+    h+='</section>';
+    S._stageShown=stage; S._goals=gs; S._info=sm.info;
+    return h;
+  }
+
+  function renderPath(cat, mid, sm){
+    var p=$('path');
+    if(!cat){ p.innerHTML='<span class="hint">左の大項目から選ぶと、掘り下げる点 → 情報提供 → 目標例 の順に右へ広がります。</span>'; return; }
+    var h='<button class="step" data-go="root">すべて</button><span class="sep">'+IC.chev+'</span>'
+      +'<button class="step" data-go="cat">'+esc(cat.name)+'</button>';
+    if(mid) h+='<span class="sep">'+IC.chev+'</span><button class="step" data-go="mid">'+esc(mid.name)+'</button>';
+    if(sm) h+='<span class="sep">'+IC.chev+'</span><button class="step" data-go="small">'+esc(sm.title)+'</button>'
+      +'<span class="sep">'+IC.chev+'</span><span>'+esc(S._stageShown)+'</span>';
+    p.innerHTML=h;
+  }
+
+  /* 列と列をつなぐ曲線（選択中の親 → その子すべて） */
+  function drawWires(){
+    var tree=$('tree'), svg=$('wires'); if(!svg) return;
+    var tb=tree.getBoundingClientRect();
+    svg.setAttribute('width', tree.scrollWidth); svg.setAttribute('height', tree.scrollHeight);
+    var paths='';
+    function link(fromEl, toEls, on){
+      if(!fromEl) return;
+      var a=fromEl.getBoundingClientRect();
+      var x1=a.right-tb.left, y1=a.top+a.height/2-tb.top;
+      toEls.forEach(function(el){
+        var b=el.getBoundingClientRect();
+        var x2=b.left-tb.left, y2=b.top+Math.min(b.height/2,22)-tb.top, mx=(x1+x2)/2;
+        var cls=on(el);
+        paths+='<path class="'+cls+'" d="M'+x1+','+y1+' C'+mx+','+y1+' '+mx+','+y2+' '+x2+','+y2+'"></path>';
+      });
+    }
+    var c1=tree.querySelector('.c1 .node.sel'), c2=tree.querySelectorAll('.c2 .node');
+    var c2s=tree.querySelector('.c2 .node.sel'), c3=tree.querySelectorAll('.c3 .node');
+    var c3s=tree.querySelector('.c3 .node.sel'), det=$('detail');
+    link(c1, [].slice.call(c2), function(el){ var l=el.classList; return l.contains('sel')?'on':l.contains('off')?'dim':l.contains('act')?'act':''; });
+    link(c2s, [].slice.call(c3), function(el){ return el.classList.contains('sel')?'on':''; });
+    if(c3s&&det) link(c3s, [det], function(){ return 'on'; });
+    svg.innerHTML=paths;
+  }
+
+  /* ---------- 操作 ---------- */
+  $('tree').addEventListener('click', function(e){
+    var n=e.target.closest('.node'), t=e.target.closest('.tab'), c=e.target.closest('[data-copy]');
+    if(c){
+      var k=c.dataset.copy;
+      if(k==='info') copyText(S._info, c);
+      else if(k==='goal') copyText(S._goals[+c.dataset.i], c);
+      else if(k==='goals') copyText(S._goals.join('\n'), c);
+      return;
+    }
+    if(t){ S.stage=t.dataset.stage; render(); return; }
+    if(!n) return;
+    var kind=n.dataset.k, id=n.dataset.id;
+    if(kind==='cat'){ if(S.cat===id){ S.cat=S.mid=S.small=null; } else { S.cat=id; S.mid=S.small=null; } S.stage=null; }
+    else if(kind==='mid'){ var m=id.split('/')[1]; if(S.mid===m){ S.mid=S.small=null; } else { S.mid=m; S.small=null; } }
+    else if(kind==='small'){ S.small=(S.small===id)?null:id; }
+    render();
+    if(kind==='small'&&S.small){ var d=$('detail'); if(d) d.scrollIntoView({behavior:'smooth', block:'nearest', inline:'nearest'}); }
+  });
+  $('path').addEventListener('click', function(e){
+    var b=e.target.closest('[data-go]'); if(!b) return;
+    var g=b.dataset.go;
+    if(g==='root'){ S.cat=S.mid=S.small=null; }
+    else if(g==='cat'){ S.mid=S.small=null; }
+    else if(g==='mid'){ S.small=null; }
+    render();
+  });
+  window.addEventListener('resize', function(){ requestAnimationFrame(drawWires); });
+
+  function setMsg(m, ok){ var el=$('msg'); el.textContent=m||''; el.className=ok?'ok':''; }
+  function load(code){
+    setMsg('');
+    return decodeCode(code).then(function(p){ applyPerson(p); setMsg('反映しました', true); })
+      .catch(function(e){ setMsg(e.message); });
+  }
+  $('apply').addEventListener('click', function(){ load($('code').value); });
+  $('code').addEventListener('keydown', function(e){ if(e.key==='Enter') load($('code').value); });
+  $('clear').addEventListener('click', function(){ $('code').value=''; setMsg(''); applyPerson(null); });
+
+  // 対象者ビューから #c=… 付きで開かれたとき。読んだらハッシュは消す（履歴・共有に残さない）
+  var m=location.hash.match(/#c=([^&]+)/);
+  if(m){
+    var code=decodeURIComponent(m[1]);
+    history.replaceState(null,'',location.pathname+location.search);
+    $('code').value=code; load(code);
+  }
+  render();
+})();
+</script>
+</body>
+</html>

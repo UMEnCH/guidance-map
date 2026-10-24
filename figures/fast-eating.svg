@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 560 260" font-family="-apple-system,Hiragino Kaku Gothic ProN,Hiragino Sans,sans-serif" fill="none" stroke-linecap="round" stroke-linejoin="round"><style>.t{fill:#1c1c1e;font-size:15px;stroke:none}.s{fill:#636366;font-size:12px;stroke:none}.b{fill:#0a84ff;font-size:14px;font-weight:700;stroke:none}.r{fill:#d70015;font-size:14px;font-weight:700;stroke:none}.g{fill:#248a3d;font-size:14px;font-weight:700;stroke:none}.ax{stroke:#8e8e93;stroke-width:1.5}</style>
+<line class="ax" x1="40" y1="200" x2="530" y2="200"/>
+<text class="s" x="40" y="222">0分</text><text class="s" x="200" y="222">10分</text><text class="s" x="360" y="222">20分</text>
+<line x1="380" y1="40" x2="380" y2="200" stroke="#30d158" stroke-width="2" stroke-dasharray="5 5"/><text class="g" x="388" y="56">満腹のサイン</text><text class="s" x="388" y="74">（食べ始めから15〜20分）</text>
+<rect x="40" y="90" width="150" height="34" rx="8" fill="#ff453a" fill-opacity=".18" stroke="#ff453a" stroke-width="2"/><text class="r" x="52" y="113">早食い：10分で完食</text>
+<text class="s" x="200" y="113">→ サインが来る前に食べ過ぎる</text>
+<rect x="40" y="140" width="340" height="34" rx="8" fill="#0a84ff" fill-opacity=".14" stroke="#0a84ff" stroke-width="2"/><text class="b" x="52" y="163">ゆっくり：20分かけて食べる</text>
+<text class="t" x="40" y="250">一口ごとに箸を置く・よく噛む・野菜から食べる</text>
+</svg>

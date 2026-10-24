@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 560 260" font-family="-apple-system,Hiragino Kaku Gothic ProN,Hiragino Sans,sans-serif" fill="none" stroke-linecap="round" stroke-linejoin="round"><style>.t{fill:#1c1c1e;font-size:15px;stroke:none}.s{fill:#636366;font-size:12px;stroke:none}.b{fill:#0a84ff;font-size:14px;font-weight:700;stroke:none}.r{fill:#d70015;font-size:14px;font-weight:700;stroke:none}.g{fill:#248a3d;font-size:14px;font-weight:700;stroke:none}.ax{stroke:#8e8e93;stroke-width:1.5}</style>
+<line class="ax" x1="50" y1="30" x2="50" y2="200"/><line class="ax" x1="50" y1="200" x2="530" y2="200"/>
+<text class="s" x="14" y="36">体重</text>
+<polyline points="80,80 140,95 200,70 260,110 320,100 380,125 440,115 500,140" stroke="#8e8e93" stroke-width="2"/>
+<g fill="#8e8e93" stroke="none"><circle cx="80" cy="80" r="4"/><circle cx="140" cy="95" r="4"/><circle cx="200" cy="70" r="4"/><circle cx="260" cy="110" r="4"/><circle cx="320" cy="100" r="4"/><circle cx="380" cy="125" r="4"/><circle cx="440" cy="115" r="4"/><circle cx="500" cy="140" r="4"/></g>
+<line x1="70" y1="78" x2="510" y2="138" stroke="#0a84ff" stroke-width="3.5"/>
+<text class="s" x="62" y="222">月</text><text class="s" x="122" y="222">火</text><text class="s" x="182" y="222">水</text><text class="s" x="242" y="222">木</text><text class="s" x="302" y="222">金</text><text class="s" x="362" y="222">土</text><text class="s" x="422" y="222">日</text><text class="s" x="482" y="222">月</text>
+<text class="t" x="200" y="45">1日ごとの上下（灰色）に一喜一憂しない</text>
+<text class="b" x="300" y="175">1週間の流れ（青）で判断する</text>
+<text class="s" x="60" y="250">はかるのは朝、トイレの後・朝食の前</text>
+</svg>

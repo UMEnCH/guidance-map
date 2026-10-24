@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 560 260" font-family="-apple-system,Hiragino Kaku Gothic ProN,Hiragino Sans,sans-serif" fill="none" stroke-linecap="round" stroke-linejoin="round"><style>.t{fill:#1c1c1e;font-size:15px;stroke:none}.s{fill:#636366;font-size:12px;stroke:none}.b{fill:#0a84ff;font-size:14px;font-weight:700;stroke:none}.r{fill:#d70015;font-size:14px;font-weight:700;stroke:none}.g{fill:#248a3d;font-size:14px;font-weight:700;stroke:none}.ax{stroke:#8e8e93;stroke-width:1.5}</style>
+<line class="ax" x1="40" y1="130" x2="530" y2="130"/>
+<g fill="#5e5ce6" fill-opacity=".85" stroke="none"><rect x="90" y="110" width="300" height="40" rx="8"/></g>
+<text class="t" x="180" y="136" style="fill:#fff">6時間以上</text>
+<text class="s" x="80" y="172">寝る</text><text class="s" x="372" y="172">起きる</text>
+<line x1="390" y1="80" x2="390" y2="180" stroke="#ff9f0a" stroke-width="2.5"/>
+<text class="b" x="400" y="95" style="fill:#c93400">起きる時刻を</text><text class="b" x="400" y="115" style="fill:#c93400">毎日そろえる</text>
+<text class="s" x="400" y="210">朝の光を浴びる</text>
+<text class="t" x="40" y="40">成人は6時間以上を目安に、必要な睡眠時間を確保する</text>
+<text class="s" x="40" y="240">休日の寝だめは体内時計を乱し、月曜の不調につながる</text>
+</svg>

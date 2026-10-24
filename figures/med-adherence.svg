@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 560 260" font-family="-apple-system,Hiragino Kaku Gothic ProN,Hiragino Sans,sans-serif" fill="none" stroke-linecap="round" stroke-linejoin="round"><style>.t{fill:#1c1c1e;font-size:15px;stroke:none}.s{fill:#636366;font-size:12px;stroke:none}.b{fill:#0a84ff;font-size:14px;font-weight:700;stroke:none}.r{fill:#d70015;font-size:14px;font-weight:700;stroke:none}.g{fill:#248a3d;font-size:14px;font-weight:700;stroke:none}.ax{stroke:#8e8e93;stroke-width:1.5}</style>
+<line class="ax" x1="60" y1="40" x2="60" y2="210"/><line class="ax" x1="60" y1="210" x2="530" y2="210"/>
+<text class="s" x="18" y="45">数値</text><text class="s" x="490" y="232">時間</text>
+<line x1="60" y1="90" x2="530" y2="90" stroke="#ff9f0a" stroke-width="1.5" stroke-dasharray="5 5"/><text class="s" x="470" y="82">基準</text>
+<path d="M70 60 C120 60 140 150 190 150 L330 150" stroke="#0a84ff" stroke-width="3.5"/>
+<path d="M330 150 L520 150" stroke="#0a84ff" stroke-width="3.5" stroke-dasharray="2 8"/>
+<path d="M330 150 C380 150 400 62 470 60 L520 60" stroke="#ff453a" stroke-width="3.5"/>
+<line x1="330" y1="110" x2="330" y2="210" stroke="#8e8e93" stroke-width="1.2" stroke-dasharray="3 4"/>
+<text class="b" x="80" y="140">服薬で下がる</text><text class="t" x="200" y="140">＝薬が効いている状態</text>
+<text class="r" x="340" y="48">自己判断で中断 → 元に戻る</text>
+<text class="s" x="340" y="175">続けた場合（点線）</text>
+<text class="s" x="300" y="228">中断</text>
+</svg>

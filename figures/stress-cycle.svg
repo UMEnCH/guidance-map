@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 560 260" font-family="-apple-system,Hiragino Kaku Gothic ProN,Hiragino Sans,sans-serif" fill="none" stroke-linecap="round" stroke-linejoin="round"><style>.t{fill:#1c1c1e;font-size:15px;stroke:none}.s{fill:#636366;font-size:12px;stroke:none}.b{fill:#0a84ff;font-size:14px;font-weight:700;stroke:none}.r{fill:#d70015;font-size:14px;font-weight:700;stroke:none}.g{fill:#248a3d;font-size:14px;font-weight:700;stroke:none}.ax{stroke:#8e8e93;stroke-width:1.5}</style>
+<circle cx="280" cy="130" r="80" stroke="#c7c7cc" stroke-width="2" stroke-dasharray="6 6"/>
+<rect x="210" y="22" width="140" height="40" rx="10" stroke="#ff9f0a" stroke-width="2"/><text class="t" x="240" y="48">ストレス</text>
+<rect x="380" y="110" width="160" height="40" rx="10" stroke="#ff453a" stroke-width="2"/><text class="t" x="392" y="136">食べる・飲む・吸う</text>
+<rect x="210" y="200" width="140" height="40" rx="10" stroke="#ff453a" stroke-width="2"/><text class="t" x="232" y="226">睡眠不足</text>
+<rect x="20" y="110" width="160" height="40" rx="10" stroke="#ff453a" stroke-width="2"/><text class="t" x="38" y="136">体重・血圧・血糖↑</text>
+<path d="M352 50 L400 104" stroke="#636366" stroke-width="2"/><path d="M440 154 L352 214" stroke="#636366" stroke-width="2"/><path d="M208 214 L120 154" stroke="#636366" stroke-width="2"/><path d="M120 106 L208 50" stroke="#636366" stroke-width="2"/>
+<text class="b" x="225" y="136">悪循環</text>
+</svg>

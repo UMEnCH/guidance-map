@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 560 260" font-family="-apple-system,Hiragino Kaku Gothic ProN,Hiragino Sans,sans-serif" fill="none" stroke-linecap="round" stroke-linejoin="round"><style>.t{fill:#1c1c1e;font-size:15px;stroke:none}.s{fill:#636366;font-size:12px;stroke:none}.b{fill:#0a84ff;font-size:14px;font-weight:700;stroke:none}.r{fill:#d70015;font-size:14px;font-weight:700;stroke:none}.g{fill:#248a3d;font-size:14px;font-weight:700;stroke:none}.ax{stroke:#8e8e93;stroke-width:1.5}</style>
+<text class="t" x="30" y="40">体重の3%減 ＝ 検査値が動き始める目安</text>
+<g stroke="none">
+<rect x="40" y="70" width="140" height="44" rx="8" fill="#e5e5ea"/><text class="t" x="58" y="98">体重 70kg</text><text class="b" x="200" y="98">→ 約2.1kg</text>
+<rect x="40" y="124" width="140" height="44" rx="8" fill="#e5e5ea"/><text class="t" x="58" y="152">体重 80kg</text><text class="b" x="200" y="152">→ 約2.4kg</text>
+<rect x="40" y="178" width="140" height="44" rx="8" fill="#e5e5ea"/><text class="t" x="58" y="206">体重 90kg</text><text class="b" x="200" y="206">→ 約2.7kg</text>
+</g>
+<rect x="340" y="70" width="190" height="152" rx="14" stroke="#30d158" stroke-width="2"/>
+<text class="g" x="358" y="102">改善が期待できる値</text>
+<text class="t" x="358" y="132">血圧</text><text class="t" x="358" y="156">血糖・HbA1c</text><text class="t" x="358" y="180">中性脂肪・HDL</text><text class="t" x="358" y="204">肝機能（ALT）</text>
+<text class="s" x="40" y="248">特定保健指導の目標の目安：腹囲2cm・体重2kg減（3か月以上かけて）</text>
+</svg>

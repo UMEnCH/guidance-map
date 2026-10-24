@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 560 260" font-family="-apple-system,Hiragino Kaku Gothic ProN,Hiragino Sans,sans-serif" fill="none" stroke-linecap="round" stroke-linejoin="round"><style>.t{fill:#1c1c1e;font-size:15px;stroke:none}.s{fill:#636366;font-size:12px;stroke:none}.b{fill:#0a84ff;font-size:14px;font-weight:700;stroke:none}.r{fill:#d70015;font-size:14px;font-weight:700;stroke:none}.g{fill:#248a3d;font-size:14px;font-weight:700;stroke:none}.ax{stroke:#8e8e93;stroke-width:1.5}</style>
+<rect x="30" y="30" width="235" height="200" rx="14" stroke="#0a84ff" stroke-width="2"/>
+<text class="b" x="50" y="60">朝</text>
+<text class="t" x="50" y="92">起きて1時間以内</text><text class="t" x="50" y="118">トイレの後</text><text class="t" x="50" y="144">朝食・服薬の前</text>
+<rect x="295" y="30" width="235" height="200" rx="14" stroke="#5e5ce6" stroke-width="2"/>
+<text class="b" x="315" y="60" style="fill:#5e5ce6">夜</text>
+<text class="t" x="315" y="92">寝る前</text><text class="t" x="315" y="118">（入浴・飲酒の直後は避ける）</text>
+<text class="s" x="50" y="190">共通：いすに座り1〜2分安静</text><text class="s" x="50" y="210">上腕式で2回はかり平均を記録</text>
+<text class="s" x="315" y="190">家庭血圧の高血圧の基準</text><text class="r" x="315" y="214">135 / 85 mmHg 以上</text>
+</svg>

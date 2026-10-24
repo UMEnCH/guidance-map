@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 560 260" font-family="-apple-system,Hiragino Kaku Gothic ProN,Hiragino Sans,sans-serif" fill="none" stroke-linecap="round" stroke-linejoin="round"><style>.t{fill:#1c1c1e;font-size:15px;stroke:none}.s{fill:#636366;font-size:12px;stroke:none}.b{fill:#0a84ff;font-size:14px;font-weight:700;stroke:none}.r{fill:#d70015;font-size:14px;font-weight:700;stroke:none}.g{fill:#248a3d;font-size:14px;font-weight:700;stroke:none}.ax{stroke:#8e8e93;stroke-width:1.5}</style>
+<line class="ax" x1="150" y1="30" x2="150" y2="220"/>
+<g stroke="none">
+<rect x="150" y="45" width="370" height="36" rx="5" fill="#ff453a" fill-opacity=".8"/><text class="t" x="30" y="69">成人の平均</text><text class="t" x="460" y="69" style="fill:#fff">約10g</text>
+<rect x="150" y="100" width="278" height="36" rx="5" fill="#ff9f0a"/><text class="t" x="30" y="124">目標 男性</text><text class="t" x="438" y="124">7.5g未満</text>
+<rect x="150" y="150" width="241" height="36" rx="5" fill="#ffcc00"/><text class="t" x="30" y="174">目標 女性</text><text class="t" x="401" y="174">6.5g未満</text>
+<rect x="150" y="200" width="222" height="36" rx="5" fill="#30d158"/><text class="t" x="30" y="224">高血圧の人</text><text class="t" x="382" y="224">6g未満</text>
+</g>
+<text class="s" x="30" y="252">日本人の食事摂取基準（2025年版）・高血圧治療ガイドライン2019</text>
+</svg>

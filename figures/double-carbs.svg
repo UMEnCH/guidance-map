@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 560 260" font-family="-apple-system,Hiragino Kaku Gothic ProN,Hiragino Sans,sans-serif" fill="none" stroke-linecap="round" stroke-linejoin="round"><style>.t{fill:#1c1c1e;font-size:15px;stroke:none}.s{fill:#636366;font-size:12px;stroke:none}.b{fill:#0a84ff;font-size:14px;font-weight:700;stroke:none}.r{fill:#d70015;font-size:14px;font-weight:700;stroke:none}.g{fill:#248a3d;font-size:14px;font-weight:700;stroke:none}.ax{stroke:#8e8e93;stroke-width:1.5}</style>
+<rect x="30" y="40" width="230" height="160" rx="14" stroke="#ff453a" stroke-width="2"/>
+<text class="r" x="50" y="70">重ね食べ</text><text class="t" x="50" y="105">ラーメン ＋ ライス</text><text class="t" x="50" y="135">うどん ＋ おにぎり</text><text class="t" x="50" y="165">焼きそば ＋ ご飯</text>
+<path d="M275 120 H295" stroke="#636366" stroke-width="2"/><path d="M288 113 L298 120 L288 127" stroke="#636366" stroke-width="2"/>
+<rect x="310" y="40" width="220" height="160" rx="14" stroke="#30d158" stroke-width="2"/>
+<text class="g" x="330" y="70">主食は1つ＋おかず</text><text class="t" x="330" y="105">ラーメン ＋ 味玉・野菜</text><text class="t" x="330" y="135">うどん ＋ サラダ</text><text class="t" x="330" y="165">焼きそば ＋ 冷奴</text>
+<text class="s" x="30" y="235">糖質の量と食後の血糖の上がり方を抑え、満足感は保つ</text>
+</svg>

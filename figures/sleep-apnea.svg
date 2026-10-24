@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 560 260" font-family="-apple-system,Hiragino Kaku Gothic ProN,Hiragino Sans,sans-serif" fill="none" stroke-linecap="round" stroke-linejoin="round"><style>.t{fill:#1c1c1e;font-size:15px;stroke:none}.s{fill:#636366;font-size:12px;stroke:none}.b{fill:#0a84ff;font-size:14px;font-weight:700;stroke:none}.r{fill:#d70015;font-size:14px;font-weight:700;stroke:none}.g{fill:#248a3d;font-size:14px;font-weight:700;stroke:none}.ax{stroke:#8e8e93;stroke-width:1.5}</style>
+<rect x="30" y="40" width="230" height="170" rx="14" stroke="#30d158" stroke-width="2"/>
+<text class="g" x="50" y="70">ふつうの呼吸</text>
+<path d="M80 100 Q145 90 210 100 M80 170 Q145 180 210 170" stroke="#1c1c1e" stroke-width="3"/>
+<path d="M90 135 H200" stroke="#0a84ff" stroke-width="2.5"/><path d="M190 128 L202 135 L190 142" stroke="#0a84ff" stroke-width="2.5"/>
+<rect x="300" y="40" width="230" height="170" rx="14" stroke="#ff453a" stroke-width="2"/>
+<text class="r" x="320" y="70">無呼吸</text>
+<path d="M350 100 Q415 125 480 100 M350 170 Q415 140 480 170" stroke="#1c1c1e" stroke-width="3"/>
+<path d="M360 135 H392" stroke="#0a84ff" stroke-width="2.5"/><path d="M402 128 L416 142 M416 128 L402 142" stroke="#ff453a" stroke-width="2.5"/>
+<text class="s" x="320" y="195">のどがふさがり空気が通らない</text>
+<text class="t" x="30" y="240">サイン：大きないびき・呼吸の停止・日中の強い眠気・肥満</text>
+</svg>

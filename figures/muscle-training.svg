@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 560 260" font-family="-apple-system,Hiragino Kaku Gothic ProN,Hiragino Sans,sans-serif" fill="none" stroke-linecap="round" stroke-linejoin="round"><style>.t{fill:#1c1c1e;font-size:15px;stroke:none}.s{fill:#636366;font-size:12px;stroke:none}.b{fill:#0a84ff;font-size:14px;font-weight:700;stroke:none}.r{fill:#d70015;font-size:14px;font-weight:700;stroke:none}.g{fill:#248a3d;font-size:14px;font-weight:700;stroke:none}.ax{stroke:#8e8e93;stroke-width:1.5}</style>
+<g stroke="#1c1c1e" stroke-width="3">
+<circle cx="100" cy="55" r="14"/><path d="M100 69 V120 M100 85 L70 100 M100 85 L130 100 M100 120 L75 150 L90 185 M100 120 L125 150 L110 185"/>
+<circle cx="280" cy="45" r="14"/><path d="M280 59 V125 M280 80 L260 110 M280 80 L300 110 M280 125 L270 185 M280 125 L290 185"/><path d="M262 192 H298" stroke="#0a84ff"/><path d="M280 175 V160" stroke="#0a84ff"/>
+<circle cx="440" cy="60" r="14"/><path d="M440 74 L470 140 M450 95 L505 85 M470 140 L480 190 M470 140 L455 190"/><path d="M510 40 V200" stroke="#8e8e93"/>
+</g>
+<text class="b" x="55" y="220">スクワット</text><text class="s" x="40" y="242">いすに座るように 10回×2</text>
+<text class="b" x="235" y="220">かかと上げ</text><text class="s" x="225" y="242">ゆっくり 20回</text>
+<text class="b" x="390" y="220">壁腕立て伏せ</text><text class="s" x="395" y="242">10回×2</text>
+<text class="s" x="330" y="22">週2〜3日・息を止めずにゆっくり</text>
+</svg>

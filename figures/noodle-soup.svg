@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 560 260" font-family="-apple-system,Hiragino Kaku Gothic ProN,Hiragino Sans,sans-serif" fill="none" stroke-linecap="round" stroke-linejoin="round"><style>.t{fill:#1c1c1e;font-size:15px;stroke:none}.s{fill:#636366;font-size:12px;stroke:none}.b{fill:#0a84ff;font-size:14px;font-weight:700;stroke:none}.r{fill:#d70015;font-size:14px;font-weight:700;stroke:none}.g{fill:#248a3d;font-size:14px;font-weight:700;stroke:none}.ax{stroke:#8e8e93;stroke-width:1.5}</style>
+<path d="M60 90 H260 Q255 200 160 205 Q65 200 60 90 Z" stroke="#1c1c1e" stroke-width="2.5"/>
+<path d="M64 110 H256" stroke="#ff9f0a" stroke-width="2"/><path d="M70 130 Q110 120 150 130 T250 130" stroke="#c7a76c" stroke-width="2"/>
+<text class="t" x="70" y="60">麺類1杯：食塩 5〜6g以上も</text>
+<path d="M300 90 H500 Q495 200 400 205 Q305 200 300 90 Z" stroke="#1c1c1e" stroke-width="2.5"/>
+<path d="M318 170 H482" stroke="#ff9f0a" stroke-width="2"/>
+<text class="b" x="330" y="60">汁を残す</text>
+<text class="g" x="330" y="235">塩分を大きく減らせる</text><text class="s" x="70" y="235">汁を全部飲む</text>
+</svg>

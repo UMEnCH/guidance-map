@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 560 260" font-family="-apple-system,Hiragino Kaku Gothic ProN,Hiragino Sans,sans-serif" fill="none" stroke-linecap="round" stroke-linejoin="round"><style>.t{fill:#1c1c1e;font-size:15px;stroke:none}.s{fill:#636366;font-size:12px;stroke:none}.b{fill:#0a84ff;font-size:14px;font-weight:700;stroke:none}.r{fill:#d70015;font-size:14px;font-weight:700;stroke:none}.g{fill:#248a3d;font-size:14px;font-weight:700;stroke:none}.ax{stroke:#8e8e93;stroke-width:1.5}</style>
+<line class="ax" x1="40" y1="120" x2="530" y2="120"/>
+<g class="s"><text class="s" x="40" y="142">12時</text><text class="s" x="150" y="142">15時</text><text class="s" x="250" y="142">18時</text><text class="s" x="350" y="142">21時</text><text class="s" x="460" y="142">24時 就寝</text></g>
+<circle cx="45" cy="120" r="8" fill="#8e8e93" stroke="none"/><text class="t" x="30" y="100">昼食</text>
+<circle cx="265" cy="120" r="10" fill="#0a84ff" stroke="none"/><text class="b" x="215" y="100">主食を先に</text><text class="s" x="210" y="170">おにぎり1個など</text>
+<circle cx="380" cy="120" r="10" fill="#30d158" stroke="none"/><text class="g" x="300" y="100">おかずを軽く</text><text class="s" x="330" y="170">野菜・汁物・たんぱく質</text>
+<rect x="430" y="60" width="100" height="80" rx="8" fill="#ff453a" fill-opacity=".12" stroke="none"/><text class="r" x="436" y="82" style="font-size:13px">就寝前2時間</text><text class="s" x="436" y="102">は食べない</text>
+<text class="t" x="40" y="220">帰りが遅い日は「分食」で、寝る前の食事を軽くする</text>
+</svg>

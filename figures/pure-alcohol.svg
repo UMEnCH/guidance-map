@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 560 260" font-family="-apple-system,Hiragino Kaku Gothic ProN,Hiragino Sans,sans-serif" fill="none" stroke-linecap="round" stroke-linejoin="round"><style>.t{fill:#1c1c1e;font-size:15px;stroke:none}.s{fill:#636366;font-size:12px;stroke:none}.b{fill:#0a84ff;font-size:14px;font-weight:700;stroke:none}.r{fill:#d70015;font-size:14px;font-weight:700;stroke:none}.g{fill:#248a3d;font-size:14px;font-weight:700;stroke:none}.ax{stroke:#8e8e93;stroke-width:1.5}</style>
+<text class="t" x="30" y="34">純アルコール約20g の目安　（量mL × 度数% ÷ 100 × 0.8）</text>
+<g stroke="#1c1c1e" stroke-width="2.2">
+<rect x="45" y="70" width="50" height="110" rx="10"/><path d="M60 70 V55 H80 V70"/>
+<path d="M160 80 H200 L195 180 H165 Z"/>
+<path d="M265 90 H305 L300 170 H270 Z"/>
+<path d="M370 100 H420 L415 165 H375 Z"/>
+<rect x="465" y="75" width="44" height="105" rx="8"/>
+</g>
+<g text-anchor="middle"><text class="t" x="70" y="205">ビール</text><text class="s" x="70" y="225">500mL・5%</text>
+<text class="t" x="180" y="205">日本酒</text><text class="s" x="180" y="225">1合・15%</text>
+<text class="t" x="285" y="205">ワイン</text><text class="s" x="285" y="225">200mL・12%</text>
+<text class="t" x="395" y="205">焼酎</text><text class="s" x="395" y="225">100mL・25%</text>
+<text class="t" x="487" y="205">チューハイ</text><text class="s" x="487" y="225">350mL・7%</text></g>
+<text class="r" x="30" y="252">リスクを高める量：1日 男性40g以上・女性20g以上</text>
+</svg>

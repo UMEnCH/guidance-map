@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 560 260" font-family="-apple-system,Hiragino Kaku Gothic ProN,Hiragino Sans,sans-serif" fill="none" stroke-linecap="round" stroke-linejoin="round"><style>.t{fill:#1c1c1e;font-size:15px;stroke:none}.s{fill:#636366;font-size:12px;stroke:none}.b{fill:#0a84ff;font-size:14px;font-weight:700;stroke:none}.r{fill:#d70015;font-size:14px;font-weight:700;stroke:none}.g{fill:#248a3d;font-size:14px;font-weight:700;stroke:none}.ax{stroke:#8e8e93;stroke-width:1.5}</style>
+<line class="ax" x1="40" y1="215" x2="530" y2="215"/>
+<g stroke="none">
+<rect x="70" y="135" width="80" height="80" rx="6" fill="#c7c7cc"/><text class="t" x="70" y="125">いま</text><text class="s" x="70" y="235">例 5,000歩</text>
+<rect x="200" y="115" width="80" height="100" rx="6" fill="#64d2ff"/><text class="t" x="200" y="105">+1,000歩</text><text class="s" x="200" y="235">+10分</text>
+<rect x="330" y="95" width="80" height="120" rx="6" fill="#0a84ff"/><text class="t" x="330" y="85">+2,000歩</text><text class="s" x="330" y="235">+20分</text>
+<rect x="450" y="60" width="80" height="155" rx="6" fill="#0040dd"/><text class="b" x="440" y="50">8,000歩</text><text class="s" x="450" y="235">目安</text>
+</g>
+<text class="t" x="40" y="30">歩行などの身体活動 1日60分（約8,000歩）が目安。まず+10分から。</text>
+</svg>
