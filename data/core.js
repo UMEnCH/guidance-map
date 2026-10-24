@@ -123,15 +123,30 @@ var GM = (function(){
   }
   function normStage(s){ s=String(s||''); for(var i=0;i<GM.STAGES.length;i++) if(s.indexOf(GM.STAGES[i])>=0) return GM.STAGES[i]; return null; }
 
+  /* 二次情報の優先順位（全角数字・「1位」なども数値に。無ければ null） */
+  function normPri(s){
+    s=String(s==null?'':s).replace(/[０-９]/g,function(d){ return String.fromCharCode(d.charCodeAt(0)-0xFEE0); });
+    var m=s.match(/\d+/); return m?parseInt(m[0],10):null;
+  }
+
+  /* 大項目の並び: 優先順位のある項目を順位順に、残りを元の並びで（対象者を反映していないときは使わない） */
+  GM.order = function(j){
+    var ranked=[], rest=[], idx={};
+    GM.cats.forEach(function(c,i){ idx[c.key]=i; (j.pri[c.key]!=null?ranked:rest).push(c.key); });
+    ranked.sort(function(a,b){ return j.pri[a]-j.pri[b] || idx[a]-idx[b]; });
+    return {ranked:ranked, rest:rest};
+  };
+
   GM.judge = function(p){
-    var res={cat:{}, mid:{}, stage:{}};
+    var res={cat:{}, mid:{}, stage:{}, pri:{}, prob:{}};
     GM.cats.forEach(function(cat){
       var R=GM.rules[cat.key]||{}, c=new Ctx(p, cat.key);
-      var anyMid=false;
+      var anyMid=false, prob=[];
       cat.mids.forEach(function(m){
         var why=[];
         try{ why=uniq(flat(R[m.id]?R[m.id](c):[])); }catch(e){ console.warn('ルールの誤り', cat.key, m.id, e); }
         var s=stateOf(why); if(s==='act') anyMid=true;
+        prob=prob.concat(why);
         res.mid[cat.key+'/'+m.id]={s:s, why:why};
       });
       var o=c.ov(), why=[];
@@ -146,8 +161,12 @@ var GM = (function(){
         cat.mids.forEach(function(m){ var r=res.mid[cat.key+'/'+m.id]; if(r.s==='off'){ r.s='pend'; } });
       }
       res.cat[cat.key]={s:s, why:why};
-      var st=p.cat&&p.cat[cat.key]&&normStage(p.cat[cat.key].st);
+      var pc=p.cat&&p.cat[cat.key];
+      var st=pc&&normStage(pc.st);
       if(st) res.stage[cat.key]=st;
+      res.pri[cat.key]=pc?normPri(pc.pr):null;
+      // アセスメント概略に出す問題点（大項目と中項目の理由をまとめる。全体評価そのものは別に出すので除く）
+      res.prob[cat.key]=uniq(why.concat(prob)).filter(function(r){ return r.k!=='ov'; });
     });
     return res;
   };

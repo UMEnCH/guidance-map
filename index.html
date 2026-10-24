@@ -17,7 +17,7 @@
   --blue:#0a84ff; --bluebg:rgba(10,132,255,.16); --red:#ff453a; --redbg:rgba(255,69,58,.15);
   --green:#30d158; --greenbg:rgba(48,209,88,.15); --amber:#ff9f0a; --amberbg:rgba(255,159,10,.15);
   --teal:#64d2ff; --focusbg:rgba(10,132,255,.09); --focusline:rgba(10,132,255,.4);
-  --col1:188px; --col2:220px; --col3:250px;
+  --col0:250px; --col1:188px; --col2:220px; --col3:250px;
 }
 *{box-sizing:border-box}
 html,body{height:100%}
@@ -75,6 +75,7 @@ svg.ic{width:14px; height:14px; flex:none}
 #wires path.act{stroke:rgba(255,159,10,.6)}
 #wires path.dim{stroke:rgba(255,255,255,.1)}
 .col{display:flex; flex-direction:column; gap:7px; position:relative; z-index:1}
+.col.c0{width:var(--col0)}
 .col.c1{width:var(--col1)} .col.c2{width:var(--col2)} .col.c3{width:var(--col3)}
 .colttl{font-size:10.5px; color:var(--sub); letter-spacing:.06em; padding:0 2px 2px}
 .node{all:unset; box-sizing:border-box; display:block; cursor:pointer; background:var(--panel);
@@ -97,6 +98,42 @@ svg.ic{width:14px; height:14px; flex:none}
 .node.off{opacity:.36}
 .node.off:hover{opacity:.7}
 .legend{display:flex; gap:12px; flex-wrap:wrap; font-size:10.5px; color:var(--sub); padding:0 16px}
+/* 大項目の区切り（優先順位あり／なし） */
+.divider{display:flex; align-items:center; gap:8px; font-size:10.5px; color:var(--sub); margin:4px 2px 0}
+.divider::before,.divider::after{content:""; flex:1; height:1px; background:var(--line)}
+.node .nm .no.pri{color:var(--amber); font-weight:700}
+
+/* ---- アセスメント概略（列0。対象者を反映しているときだけ） ---- */
+.asm{all:unset; box-sizing:border-box; display:block; cursor:pointer; background:var(--panel);
+  border:1px solid var(--line); border-radius:11px; padding:7px 10px; transition:background .15s ease}
+.asm:hover{background:var(--bg)}
+.asm:focus-visible{outline:2px solid var(--focusline); outline-offset:2px}
+.asm.sel{border-color:var(--blue)}
+.asm .hd{display:flex; align-items:center; gap:6px; flex-wrap:wrap}
+.asm .hd b{font-size:12.5px; font-weight:700}
+.asm .pr{font-size:10px; font-weight:700; color:#1c1c1e; background:var(--amber); border-radius:999px; padding:0 6px}
+.asm .st{font-size:10px; color:var(--sub); margin-left:auto}
+.ovb{font-size:10px; font-weight:700; border-radius:5px; padding:0 6px; white-space:nowrap}
+.asm .probs{display:flex; flex-wrap:wrap; gap:3px; margin-top:5px}
+.asm .probs:empty{display:none}
+.asm .probs .chip{font-size:10px; padding:0 7px}
+.chip.prob{background:var(--redbg); color:#ff8a82; font-weight:600}
+/* 全体評価の段階で強さを変える（大きく問題あり＞問題あり＞注意＞要聴取＞問題なし・未評価） */
+.asm.lv4{border-color:rgba(255,69,58,.7); background:rgba(255,69,58,.10)}
+.asm.lv4 .ovb{background:var(--red); color:#fff}
+.asm.lv3{border-left:4px solid var(--red)}
+.asm.lv3 .ovb{background:var(--redbg); color:#ff8a82}
+.asm.lv2{border-left:4px solid var(--amber)}
+.asm.lv2 .ovb{background:var(--amberbg); color:var(--amber)}
+.asm.lv1 .ovb{background:var(--field); color:var(--sub)}
+.asm.lv1{border-style:dashed}
+.asm.lv0{opacity:.5}
+.asm.lv0 .ovb{background:var(--greenbg); color:var(--green)}
+.asm.lv0 .probs{display:none}
+.asm.lvn{opacity:.75}
+.asm.lvn .ovb{background:var(--field); color:var(--sub)}
+.asmsum{font-size:11px; color:var(--sub); line-height:1.6; padding:0 2px 4px}
+.asmsum b{color:#ff8a82}
 .legend[hidden]{display:none}
 .legend span{display:inline-flex; align-items:center; gap:5px}
 .legend i{display:inline-block; width:14px; height:10px; border-radius:3px; border:1px solid var(--line); background:var(--panel)}
@@ -136,7 +173,7 @@ svg.ic{width:14px; height:14px; flex:none}
   transition:opacity .2s ease, transform .2s ease; pointer-events:none; z-index:10}
 #toast.on{opacity:1; transform:translateX(-50%) translateY(0)}
 @media (prefers-reduced-motion: reduce){ *{transition:none !important} }
-@media (max-width:720px){ :root{--col1:150px; --col2:180px; --col3:210px} #tree{gap:28px} }
+@media (max-width:720px){ :root{--col0:210px; --col1:150px; --col2:180px; --col3:210px} #tree{gap:28px} }
 </style>
 </head>
 <body>
@@ -275,10 +312,19 @@ svg.ic{width:14px; height:14px; flex:none}
   function render(){
     var cat=findCat(S.cat), mid=findMid(cat,S.mid), sm=findSmall(mid,S.small);
     var h='<svg id="wires"></svg>';
-    h+='<div class="col c1"><div class="colttl">大項目</div>';
-    GM.cats.forEach(function(c,i){
-      h+=nodeHtml('cat', c.key, '<div class="nm"><span class="no">'+(i+1)+'</span>'+esc(c.name)+'<span class="cnt">'+c.mids.length+'</span></div>', S.cat===c.key);
-    });
+    // 対象者を反映しているときは、大項目を介入の優先順位の順に並べ、順位の無いものは区切り線の下に元の順で
+    var ord=S.judge?GM.order(S.judge):{ranked:[], rest:GM.cats.map(function(c){return c.key;})};
+    if(S.judge) h+=assessHtml(ord);
+    h+='<div class="col c1"><div class="colttl">大項目'+(ord.ranked.length?'（介入の優先順位順）':'')+'</div>';
+    function catNode(key, pri){
+      // 順位なしの項目に元の番号を出すと順位と紛れるので、反映中は番号を出さない
+      var c=findCat(key), no=pri!=null?'<span class="no pri" title="介入の優先順位">'+pri+'</span>'
+        :'<span class="no">'+(S.judge?'':(GM.cats.indexOf(c)+1))+'</span>';
+      return nodeHtml('cat', c.key, '<div class="nm">'+no+esc(c.name)+'<span class="cnt">'+c.mids.length+'</span></div>', S.cat===c.key);
+    }
+    ord.ranked.forEach(function(k){ h+=catNode(k, S.judge.pri[k]); });
+    if(ord.ranked.length && ord.rest.length) h+='<div class="divider">優先順位なし</div>';
+    ord.rest.forEach(function(k){ h+=catNode(k, null); });
     h+='</div>';
     if(cat){
       h+='<div class="col c2"><div class="colttl">中項目（掘り下げる点）</div>';
@@ -298,6 +344,41 @@ svg.ic{width:14px; height:14px; flex:none}
     $('tree').innerHTML=h;
     renderPath(cat, mid, sm);
     requestAnimationFrame(drawWires);
+  }
+
+  /* 二次情報の全体評価 → 強さ（4=大きく問題あり 3=問題あり 2=注意 1=要聴取 0=問題なし・未評価） */
+  function ovLevel(o){
+    o=String(o||'');
+    if(/大きく問題あり/.test(o)) return 4;
+    if(/問題あり/.test(o)) return 3;
+    if(/注意/.test(o)) return 2;
+    if(/聴取/.test(o)) return 1;
+    if(/問題なし/.test(o)) return 0;
+    return 'n';   // 未評価・未判定
+  }
+  function ovLabel(o){ o=String(o||'').replace('が必要',''); return /今後、?聴取/.test(o)?'要聴取':(o||'未評価'); }
+
+  /* 列0: アセスメント概略（並びは大項目の列と同じ） */
+  function assessHtml(ord){
+    var p=S.person, keys=ord.ranked.concat(ord.rest), nBad=0, nWarn=0;
+    var cards=keys.map(function(k, i){
+      var c=findCat(k), pc=(p.cat&&p.cat[k])||{}, lv=ovLevel(pc.o);
+      if(lv===3||lv===4) nBad++; else if(lv===2) nWarn++;
+      var probs=(S.judge.prob[k]||[]).filter(function(r){ return r.k!=='pend'; }).slice(0,6);
+      var pend=(S.judge.prob[k]||[]).filter(function(r){ return r.k==='pend'; }).length;
+      var pri=S.judge.pri[k];
+      return (i===ord.ranked.length && ord.ranked.length?'<div class="divider">優先順位なし</div>':'')
+        +'<button class="asm lv'+lv+(S.cat===k?' sel':'')+'" data-cat="'+esc(k)+'" title="'+esc(c.name)+'を開く">'
+        +'<div class="hd">'+(pri!=null?'<span class="pr">'+pri+'</span>':'')+'<b>'+esc(c.name)+'</b>'
+        +'<span class="ovb">'+esc(ovLabel(pc.o))+'</span>'
+        +(pc.st?'<span class="st">'+esc(pc.st)+'</span>':'')+'</div>'
+        +'<div class="probs">'+probs.map(function(r){
+          var cls=r.k==='it'?'prob':r.k==='lab'?'hi':r.k==='dis'?'dis':'';
+          return '<span class="chip '+cls+'">'+esc(r.t)+'</span>';
+        }).join('')+(pend?'<span class="chip pend">要聴取 '+pend+'件</span>':'')+'</div></button>';
+    }).join('');
+    return '<div class="col c0"><div class="colttl">生活習慣アセスメント（概略）</div>'
+      +'<div class="asmsum">問題あり <b>'+nBad+'</b> 項目・注意 '+nWarn+' 項目</div>'+cards+'</div>';
   }
 
   function detailHtml(cat, mid, sm){
@@ -381,6 +462,8 @@ svg.ic{width:14px; height:14px; flex:none}
       return;
     }
     if(t){ S.stage=t.dataset.stage; render(); return; }
+    var a=e.target.closest('.asm');
+    if(a){ var k0=a.dataset.cat; if(S.cat!==k0){ S.cat=k0; S.mid=S.small=null; S.stage=null; render(); } return; }
     if(!n) return;
     var kind=n.dataset.k, id=n.dataset.id;
     if(kind==='cat'){ if(S.cat===id){ S.cat=S.mid=S.small=null; } else { S.cat=id; S.mid=S.small=null; } S.stage=null; }
