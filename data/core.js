@@ -2,7 +2,7 @@
  * 収録内容は data/01〜10-*.js、判定ルールは data/rules.js に書く。 */
 var GM = (function(){
   'use strict';
-  var GM = { cats:[], rules:{} };
+  var GM = { cats:[], rules:{}, goalKw:{} };
 
   GM.STAGES = ['無関心期','関心期','準備期','実行期','維持期'];
 
@@ -168,6 +168,38 @@ var GM = (function(){
       // アセスメント概略に出す問題点（大項目と中項目の理由をまとめる。全体評価そのものは別に出すので除く）
       res.prob[cat.key]=uniq(why.concat(prob)).filter(function(r){ return r.k!=='ov'; });
     });
+    GM.judgeGoals(p, res);
+    return res;
+  };
+
+  /* 取り組み内容（p.gl = [[回, 種別キー, 達成状況, 目標の文言], …]）を大項目・中項目に割り当てる。
+   *   res.goals        … 全件（{no, k, st, t, mids:[中項目id]}・回の順）
+   *   res.done[大項目] … その大項目の目標（種別キーで割り当て）
+   *   res.doneMid['大項目/中項目'] … 文言が GM.goalKw（rules.js）のキーワードに当たった目標
+   * 種別が未設定の目標は、キーワードが当たった大項目に割り当てる。「その他」とどこにも当たらないものは res.other。 */
+  GM.judgeGoals = function(p, res){
+    res.goals=[]; res.done={}; res.doneMid={}; res.other=[];
+    var keys={}; GM.cats.forEach(function(c){ keys[c.key]=c; });
+    (p.gl||[]).forEach(function(a){
+      if(!Array.isArray(a)) return;
+      var g={no:Number(a[0])||0, k:String(a[1]||''), st:String(a[2]||''), t:String(a[3]||''), mids:[]};
+      // 種別「その他」（10項目外）は割り当てない。未設定のときだけ全大項目からキーワードで探す
+      var cats=keys[g.k]?[keys[g.k]]:(g.k==='other'?[]:GM.cats);
+      cats.forEach(function(c){
+        var kw=GM.goalKw[c.key]||{};
+        c.mids.forEach(function(m){
+          if(kw[m.id] && kw[m.id].test(g.t)){
+            if(!keys[g.k]) g.k=c.key;   // 種別未設定 → 最初に当たった大項目
+            if(g.k!==c.key) return;
+            g.mids.push(m.id);
+            (res.doneMid[c.key+'/'+m.id]=res.doneMid[c.key+'/'+m.id]||[]).push(g);
+          }
+        });
+      });
+      if(keys[g.k]) (res.done[g.k]=res.done[g.k]||[]).push(g); else res.other.push(g);
+      res.goals.push(g);
+    });
+    res.goals.sort(function(x,y){ return x.no-y.no; });
     return res;
   };
 

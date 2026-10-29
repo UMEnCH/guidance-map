@@ -135,6 +135,27 @@ svg.ic{width:14px; height:14px; flex:none}
 .asmsum{font-size:11px; color:var(--sub); line-height:1.6; padding:0 2px 4px}
 .asmsum b{color:#ff8a82}
 .legend[hidden]{display:none}
+/* 取り組み内容（面談の目標に取り上げた項目）。緑のチェック＋回数、ノードの右端に緑の帯 */
+.node.dn::after, .asm.dn::after{content:""; position:absolute; right:-1px; top:8px; bottom:8px; width:3px; border-radius:3px; background:var(--green)}
+.asm{position:relative}
+.dnb{display:inline-flex; align-items:center; gap:3px; font-size:10px; font-weight:700; color:var(--green);
+  background:var(--greenbg); border-radius:999px; padding:0 7px; white-space:nowrap}
+.dnb .ic{width:10px; height:10px}
+.node.off.dn{opacity:.6}
+.gls{display:flex; flex-direction:column; gap:3px; margin-top:6px}
+.gl{display:flex; align-items:baseline; gap:6px; font-size:10.5px; line-height:1.45; min-width:0}
+.gl .gno{color:var(--sub); flex:none; font-variant-numeric:tabular-nums}
+.gl .gtx{flex:1 1 auto; min-width:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; color:var(--ink)}
+.gls.full .gl .gtx{white-space:normal}
+.gst{flex:none; font-size:9.5px; font-weight:700; border-radius:4px; padding:0 5px; background:var(--field); color:var(--sub)}
+.gst.ok{background:var(--greenbg); color:var(--green)} .gst.mid{background:var(--amberbg); color:var(--amber)}
+.gst.bad{background:var(--redbg); color:#ff8a82} .gst.nx{background:var(--bluebg); color:#7fbfff}
+.glmore{font-size:10px; color:var(--sub)}
+.dnbox{background:var(--panel); border:1px solid rgba(48,209,88,.35); border-radius:10px; padding:8px 10px; margin-bottom:6px}
+.dnbox .ttl{font-size:10.5px; font-weight:700; color:var(--green); display:flex; align-items:center; gap:4px}
+.dnbox .ttl .ic{width:11px; height:11px}
+.dnbox .gl.hit .gtx{color:var(--green)}
+.legend i.d{border-right:3px solid var(--green)}
 .legend span{display:inline-flex; align-items:center; gap:5px}
 .legend i{display:inline-block; width:14px; height:10px; border-radius:3px; border:1px solid var(--line); background:var(--panel)}
 .legend i.a{border-left:3px solid var(--amber)} .legend i.p{border-style:dashed} .legend i.o{opacity:.36}
@@ -193,6 +214,7 @@ svg.ic{width:14px; height:14px; flex:none}
   <span><i class="a"></i>この対象者に関係あり</span>
   <span><i class="p"></i>要聴取（未聴取の項目あり）</span>
   <span><i class="o"></i>関係なし（押せば見られる）</span>
+  <span id="lgDone" hidden><i class="d"></i>取り組み済み（面談の目標に取り上げた）</span>
 </div>
 <main id="stage"><div id="tree"></div></main>
 <div id="toast"></div>
@@ -227,6 +249,7 @@ svg.ic{width:14px; height:14px; flex:none}
   var IC = {
     copy: SVGH+'<rect x="9" y="9" width="11" height="11" rx="2"></rect><path d="M5 15V5a2 2 0 0 1 2-2h10"></path></svg>',
     check: SVGH+'<path d="M5 12l5 5L20 7"></path></svg>',
+    done: SVGH+'<path d="M5 12l5 5L20 7"></path></svg>',
     ext: SVGH+'<path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><path d="M15 3h6v6"></path><path d="M10 14 21 3"></path></svg>',
     chev: '<svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:11px;height:11px"><path d="M9 6l6 6-6 6"></path></svg>'
   };
@@ -270,6 +293,7 @@ svg.ic{width:14px; height:14px; flex:none}
 
   function applyPerson(p){
     S.person=p; S.judge=p?GM.judge(p):null;
+    $('lgDone').hidden=!(S.judge&&S.judge.goals&&S.judge.goals.length);
     renderWho(); render();
   }
   function renderWho(){
@@ -298,10 +322,41 @@ svg.ic{width:14px; height:14px; flex:none}
       return '<span class="chip '+cls+'">'+esc(r.t)+'</span>';
     }).join('');
   }
+  /* ---------- 取り組み内容 ---------- */
+  function goalsOf(kind, id){
+    if(!S.judge||!S.judge.done) return [];
+    return (kind==='cat'?S.judge.done[id]:kind==='mid'?S.judge.doneMid[id]:null)||[];
+  }
+  // 回の一覧（重複なし）を「第2・4・5回」の形に
+  function roundsText(gs){
+    var ns=[]; gs.forEach(function(g){ if(g.no&&ns.indexOf(g.no)<0) ns.push(g.no); });
+    ns.sort(function(a,b){return a-b;});
+    return ns.length?'第'+ns.join('・')+'回':'';
+  }
+  function doneBadge(gs){
+    if(!gs.length) return '';
+    var title=gs.map(function(g){ return '第'+g.no+'回 '+g.t+(g.st?'（'+g.st+'）':''); }).join('\n');
+    return '<span class="dnb" title="'+esc(title)+'">'+IC.done+'取組 '+gs.length+'</span>';
+  }
+  function stCls(st){
+    return st==='達成'?'ok':st==='変化なし'?'bad':(st==='目標ライン'||st==='変化あり目標未満')?'mid':st==='次回'?'nx':'';
+  }
+  function stLabel(st){ return st==='次回'?'次回から':st==='みなし'?'みなし実施':(st||'未入力'); }
+  function goalLines(gs, max, hitMid){
+    var list=max?gs.slice(-max):gs;
+    var h=list.map(function(g){
+      var hit=hitMid&&g.mids.indexOf(hitMid)>=0;
+      return '<div class="gl'+(hit?' hit':'')+'"><span class="gno">第'+g.no+'回</span>'
+        +'<span class="gtx" title="'+esc(g.t)+'">'+esc(g.t)+'</span>'
+        +'<span class="gst '+stCls(g.st)+'">'+esc(stLabel(g.st))+'</span></div>';
+    }).join('');
+    if(max&&gs.length>max) h='<div class="glmore">ほか '+(gs.length-max)+' 件（'+roundsText(gs.slice(0,gs.length-max))+'）</div>'+h;
+    return h;
+  }
   function nodeHtml(kind, id, inner, sel, extraCls){
-    var j=st(kind,id);
-    return '<button class="node '+(extraCls||'')+' '+(j.s||'')+(sel?' sel':'')+'" data-k="'+kind+'" data-id="'+esc(id)+'">'
-      +inner+'<div class="why">'+whyHtml(j)+'</div></button>';
+    var j=st(kind,id), gs=goalsOf(kind,id);
+    return '<button class="node '+(extraCls||'')+' '+(j.s||'')+(gs.length?' dn':'')+(sel?' sel':'')+'" data-k="'+kind+'" data-id="'+esc(id)+'">'
+      +inner.replace('<span class="cnt">', doneBadge(gs)+'<span class="cnt">')+'<div class="why">'+whyHtml(j)+'</div></button>';
   }
 
   /* ---------- 描画 ---------- */
@@ -328,6 +383,9 @@ svg.ic{width:14px; height:14px; flex:none}
     h+='</div>';
     if(cat){
       h+='<div class="col c2"><div class="colttl">中項目（掘り下げる点）</div>';
+      var cg=goalsOf('cat', cat.key);
+      if(cg.length) h+='<div class="dnbox"><div class="ttl">'+IC.done+'これまでの取り組み（'+esc(cat.name)+'）</div>'
+        +'<div class="gls full">'+goalLines(cg, 0, S.mid)+'</div></div>';
       cat.mids.forEach(function(m){
         h+=nodeHtml('mid', cat.key+'/'+m.id, '<div class="nm">'+esc(m.name)+'<span class="cnt">'+m.smalls.length+'</span></div>', S.mid===m.id);
       });
@@ -368,17 +426,23 @@ svg.ic{width:14px; height:14px; flex:none}
       var pend=(S.judge.prob[k]||[]).filter(function(r){ return r.k==='pend'; }).length;
       var pri=S.judge.pri[k];
       return (i===ord.ranked.length && ord.ranked.length?'<div class="divider">優先順位なし</div>':'')
-        +'<button class="asm lv'+lv+(S.cat===k?' sel':'')+'" data-cat="'+esc(k)+'" title="'+esc(c.name)+'を開く">'
+        +'<button class="asm lv'+lv+(goalsOf('cat',k).length?' dn':'')+(S.cat===k?' sel':'')+'" data-cat="'+esc(k)+'" title="'+esc(c.name)+'を開く">'
         +'<div class="hd">'+(pri!=null?'<span class="pr">'+pri+'</span>':'')+'<b>'+esc(c.name)+'</b>'
         +'<span class="ovb">'+esc(ovLabel(pc.o))+'</span>'
-        +(pc.st?'<span class="st">'+esc(pc.st)+'</span>':'')+'</div>'
+        +(pc.st?'<span class="st">'+esc(pc.st)+'</span>':'')+doneBadge(goalsOf('cat',k))+'</div>'
         +'<div class="probs">'+probs.map(function(r){
           var cls=r.k==='it'?'prob':r.k==='lab'?'hi':r.k==='dis'?'dis':'';
           return '<span class="chip '+cls+'">'+esc(r.t)+'</span>';
-        }).join('')+(pend?'<span class="chip pend">要聴取 '+pend+'件</span>':'')+'</div></button>';
+        }).join('')+(pend?'<span class="chip pend">要聴取 '+pend+'件</span>':'')+'</div>'
+        +(goalsOf('cat',k).length?'<div class="gls">'+goalLines(goalsOf('cat',k), 3)+'</div>':'')+'</button>';
     }).join('');
+    var gAll=S.judge.goals||[], nCat=Object.keys(S.judge.done||{}).length;
+    var other=S.judge.other||[];
     return '<div class="col c0"><div class="colttl">生活習慣アセスメント（概略）</div>'
-      +'<div class="asmsum">問題あり <b>'+nBad+'</b> 項目・注意 '+nWarn+' 項目</div>'+cards+'</div>';
+      +'<div class="asmsum">問題あり <b>'+nBad+'</b> 項目・注意 '+nWarn+' 項目'
+      +(gAll.length?'<br>取り組み <span class="dnb">'+IC.done+gAll.length+' 件</span> '+nCat+' 項目（'+esc(roundsText(gAll))+'）':'')+'</div>'
+      +(other.length?'<div class="dnbox"><div class="ttl">'+IC.done+'その他の取り組み（10項目外）</div><div class="gls">'+goalLines(other,0)+'</div></div>':'')
+      +cards+'</div>';
   }
 
   function detailHtml(cat, mid, sm){
