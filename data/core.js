@@ -169,6 +169,88 @@ var GM = (function(){
       res.prob[cat.key]=uniq(why.concat(prob)).filter(function(r){ return r.k!=='ov'; });
     });
     GM.judgeGoals(p, res);
+    GM.judgeReassess(p, res);
+    GM.judgeTodo(p, res);
+    GM.judgeSimilar(res);
+    return res;
+  };
+
+  /* 生活習慣の再評価（p.ra = [[回, {大項目キー:[全体評価, ステージ]}], …]・確定済みの回だけ）
+   *   res.ra[大項目]  … 回の順の [{at, o, st}]
+   *   res.cur[大項目] … いまの評価 {o, st, at}（最新の再評価。無ければ初回の二次情報で at=0）
+   * いまのステージがあれば res.stage を置き換える（詳細パネルの初期表示・「対象者」の印に使う）。 */
+  GM.judgeReassess = function(p, res){
+    res.ra={}; res.cur={};
+    var rs=(p.ra||[]).filter(Array.isArray).slice().sort(function(a,b){ return (a[0]||0)-(b[0]||0); });
+    GM.cats.forEach(function(cat){
+      var k=cat.key, pc=(p.cat&&p.cat[k])||{}, list=[];
+      rs.forEach(function(r){ var v=r[1]&&r[1][k]; if(v) list.push({at:Number(r[0])||0, o:String(v[0]||''), st:String(v[1]||'')}); });
+      res.ra[k]=list;
+      var cur={o:pc.o||'', st:pc.st||'', at:0};
+      list.forEach(function(x){ if(x.o) cur.o=x.o; if(x.st) cur.st=x.st; cur.at=x.at; });
+      res.cur[k]=cur;
+      var st=normStage(cur.st); if(st) res.stage[k]=st;
+    });
+    return res;
+  };
+
+  /* 次の目標の候補＝要介入なのに、まだ目標に取り上げていない大項目（res.todo・優先順位→評価の重さの順）
+   * 要介入: 優先順位がある、または いまの評価が「注意」以上。次回に向けた新規目標（st='次回'）は取り上げ済みとみなす。 */
+  GM.judgeTodo = function(p, res){
+    var idx={}; GM.cats.forEach(function(c,i){ idx[c.key]=i; });
+    function sev(o){ o=String(o||''); return /大きく問題あり/.test(o)?3:/問題あり/.test(o)?2:/注意/.test(o)?1:0; }
+    res.todo=GM.cats.map(function(c){ return c.key; }).filter(function(k){
+      if((res.done[k]||[]).length) return false;
+      return res.pri[k]!=null || sev(res.cur[k]&&res.cur[k].o)>0;
+    }).sort(function(a,b){
+      var pa=res.pri[a], pb=res.pri[b];
+      if((pa==null)!==(pb==null)) return pa==null?1:-1;
+      if(pa!=null&&pa!==pb) return pa-pb;
+      return sev(res.cur[b].o)-sev(res.cur[a].o) || idx[a]-idx[b];
+    });
+    return res;
+  };
+
+  /* 目標例と過去の目標の近さ（2文字ずつの一致率・Dice係数）。言い換えをそろえ、
+   * 「週◯日以上」など目標例に共通の言い回しは数えない。同じ大項目の中だけで比べる。 */
+  var SYN=[[/スマートフォン/g,'スマホ'],[/休肝日/g,'飲まない日'],[/ウォーキング|散歩/g,'歩く'],
+    [/ごはん|ご飯|白米/g,'主食'],[/測って|計って|はかって|測る|計る|はかる/g,'測'],
+    [/エアロバイク|自転車|ジョギング|水泳/g,'運動']];
+  var STOP={}; ('する ます して った てい いる こと もの ない うに よう から まで には では にす を0 0分 0回 0日 '
+    +'週0 日以 以上 上に る日 日を 毎日 今週 今夜 始め める 続け ける か月 1か を週 とる').split(' ').forEach(function(b){ STOP[b]=1; });
+  function bigrams(t){
+    t=SYN.reduce(function(x,r){ return x.replace(r[0],r[1]); }, String(t||'').normalize('NFKC'))
+      .replace(/[\s、。・,.!！?？()（）「」『』〜~\-ー]/g,'').replace(/\d+/g,'0');
+    var o={}, n=0;
+    for(var i=0;i<t.length-1;i++){ var b=t.slice(i,i+2); if(!STOP[b]&&!o[b]){ o[b]=1; n++; } }
+    return {set:o, n:n};
+  }
+  GM.goalSim = function(a, b){
+    var A=bigrams(a), B=bigrams(b), m=0;
+    if(!A.n||!B.n) return 0;
+    Object.keys(A.set).forEach(function(x){ if(B.set[x]) m++; });
+    return 2*m/(A.n+B.n);
+  };
+  GM.SIM_TH = 0.4;
+  /* 小項目の目標例ごとに、近い過去の目標を探す（res.sim['大項目/中項目/小項目'][ステージ][i] = [目標]）。
+   * res.simSmall['大項目/中項目/小項目'] … どれかの目標例に近い過去の目標があれば その目標の配列 */
+  GM.judgeSimilar = function(res){
+    res.sim={}; res.simSmall={};
+    GM.cats.forEach(function(cat){
+      var gs=res.done[cat.key]||[]; if(!gs.length) return;
+      cat.mids.forEach(function(m){ m.smalls.forEach(function(sm){
+        var key=cat.key+'/'+m.id+'/'+sm.id, hit=[];
+        Object.keys(sm.goals||{}).forEach(function(stg){
+          (sm.goals[stg]||[]).forEach(function(ex, i){
+            var near=gs.filter(function(g){ return GM.goalSim(g.t, ex)>=GM.SIM_TH; });
+            if(!near.length) return;
+            ((res.sim[key]=res.sim[key]||{})[stg]=res.sim[key][stg]||{})[i]=near;
+            near.forEach(function(g){ if(hit.indexOf(g)<0) hit.push(g); });
+          });
+        });
+        if(hit.length) res.simSmall[key]=hit;
+      }); });
+    });
     return res;
   };
 

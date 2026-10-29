@@ -156,6 +156,32 @@ svg.ic{width:14px; height:14px; flex:none}
 .dnbox .ttl .ic{width:11px; height:11px}
 .dnbox .gl.hit .gtx{color:var(--green)}
 .legend i.d{border-right:3px solid var(--green)}
+/* 達成状況の流れ（回ごとの丸。色＝達成状況） */
+.flow{display:flex; flex-wrap:wrap; align-items:center; gap:3px; margin-top:6px}
+.fd{display:inline-flex; align-items:center; justify-content:center; min-width:17px; height:17px; border-radius:999px;
+  font-size:9.5px; font-weight:700; font-variant-numeric:tabular-nums; background:var(--field); color:var(--sub); padding:0 3px; box-sizing:border-box}
+.fd.ok{background:var(--green); color:#0b2a12} .fd.mid{background:var(--amber); color:#2a1a00}
+.fd.bad{background:var(--red); color:#fff} .fd.nx{background:transparent; color:#7fbfff; border:1.5px dashed #7fbfff}
+.fsep{color:var(--sub); font-size:9px}
+.fd.ra{background:transparent; color:var(--teal); border:1.5px solid var(--teal); border-radius:4px}
+/* 再評価で変わった評価・ステージ */
+.raln{font-size:10.5px; color:var(--sub); margin-top:4px; line-height:1.5}
+.raln b{color:var(--teal); font-weight:700}
+/* 次の目標の候補（要介入なのに未取組） */
+.todo{background:var(--panel); border:1px solid rgba(255,159,10,.45); border-radius:10px; padding:8px 10px; margin-bottom:6px}
+.todo .ttl{font-size:10.5px; font-weight:700; color:var(--amber); margin-bottom:4px}
+.todo .tdr{all:unset; box-sizing:border-box; display:flex; align-items:center; gap:6px; width:100%; cursor:pointer;
+  font-size:11.5px; padding:3px 4px; border-radius:6px}
+.todo .tdr:hover{background:var(--bg)}
+.todo .tdr:focus-visible{outline:2px solid var(--focusline)}
+.todo .tdr .rk{font-size:10px; color:var(--sub); min-width:12px; font-variant-numeric:tabular-nums}
+.todo .tdr .ovb{margin-left:auto}
+.todo .none{font-size:11px; color:var(--sub)}
+.chip.todoc{background:var(--amberbg); color:var(--amber); font-weight:700}
+/* 目標例のうち、過去の目標に近いもの */
+.goals li.near{box-shadow:inset 3px 0 0 var(--green)}
+.goals li .nearc{flex:none; font-size:10px; font-weight:700; border-radius:4px; padding:0 6px; margin-top:3px}
+.tab .dn{position:absolute; bottom:-4px; left:50%; transform:translateX(-50%); width:5px; height:5px; border-radius:50%; background:var(--green)}
 .legend span{display:inline-flex; align-items:center; gap:5px}
 .legend i{display:inline-block; width:14px; height:10px; border-radius:3px; border:1px solid var(--line); background:var(--panel)}
 .legend i.a{border-left:3px solid var(--amber)} .legend i.p{border-style:dashed} .legend i.o{opacity:.36}
@@ -215,6 +241,7 @@ svg.ic{width:14px; height:14px; flex:none}
   <span><i class="p"></i>要聴取（未聴取の項目あり）</span>
   <span><i class="o"></i>関係なし（押せば見られる）</span>
   <span id="lgDone" hidden><i class="d"></i>取り組み済み（面談の目標に取り上げた）</span>
+  <span id="lgFlow" hidden><span class="fd ok">4</span><span class="fd mid">5</span><span class="fd bad">6</span><span class="fd nx">7</span>第◯回の目標（達成／一部／変化なし／次回から）</span>
 </div>
 <main id="stage"><div id="tree"></div></main>
 <div id="toast"></div>
@@ -293,7 +320,7 @@ svg.ic{width:14px; height:14px; flex:none}
 
   function applyPerson(p){
     S.person=p; S.judge=p?GM.judge(p):null;
-    $('lgDone').hidden=!(S.judge&&S.judge.goals&&S.judge.goals.length);
+    $('lgDone').hidden=$('lgFlow').hidden=!(S.judge&&S.judge.goals&&S.judge.goals.length);
     renderWho(); render();
   }
   function renderWho(){
@@ -350,8 +377,36 @@ svg.ic{width:14px; height:14px; flex:none}
         +'<span class="gtx" title="'+esc(g.t)+'">'+esc(g.t)+'</span>'
         +'<span class="gst '+stCls(g.st)+'">'+esc(stLabel(g.st))+'</span></div>';
     }).join('');
-    if(max&&gs.length>max) h='<div class="glmore">ほか '+(gs.length-max)+' 件（'+roundsText(gs.slice(0,gs.length-max))+'）</div>'+h;
+    if(max>1&&gs.length>max) h='<div class="glmore">ほか '+(gs.length-max)+' 件（'+roundsText(gs.slice(0,gs.length-max))+'）</div>'+h;
     return h;
+  }
+  // 達成状況の流れ（回の順の丸）。再評価の回は四角で挟む
+  function flowHtml(gs, k){
+    var ra=(S.judge.ra&&S.judge.ra[k])||[], items=[];
+    gs.forEach(function(g){ items.push({no:g.no, h:'<span class="fd '+stCls(g.st)+'" title="'+esc('第'+g.no+'回 '+g.t+'（'+stLabel(g.st)+'）')+'">'+g.no+'</span>'}); });
+    ra.forEach(function(r){ items.push({no:r.at+0.5, h:'<span class="fd ra" title="'+esc('第'+r.at+'回 再評価: '+(r.o||'—')+'・'+(r.st||'—'))+'">再</span>'}); });
+    items.sort(function(a,b){ return a.no-b.no; });
+    return items.length?'<div class="flow">'+items.map(function(x){ return x.h; }).join('')+'</div>':'';
+  }
+  // 再評価で変わった評価・ステージ（初回 → 最新の再評価）
+  function raLine(k){
+    var cur=S.judge.cur&&S.judge.cur[k], pc=(S.person.cat&&S.person.cat[k])||{};
+    if(!cur||!cur.at) return '';
+    var parts=[];
+    if(cur.o&&cur.o!==(pc.o||'')) parts.push('評価 '+esc(ovLabel(pc.o))+' → <b>'+esc(ovLabel(cur.o))+'</b>');
+    if(cur.st&&cur.st!==(pc.st||'')) parts.push('ステージ '+esc(pc.st||'—')+' → <b>'+esc(cur.st)+'</b>');
+    return '<div class="raln">第'+cur.at+'回 再評価: '+(parts.length?parts.join('・'):'初回から変化なし')+'</div>';
+  }
+  function todoHtml(){
+    var td=S.judge.todo||[];
+    var rows=td.map(function(k,i){
+      var c=findCat(k), cur=S.judge.cur[k]||{}, pri=S.judge.pri[k];
+      return '<button class="tdr" data-cat="'+esc(k)+'" title="'+esc(c.name)+'を開く"><span class="rk">'+(i+1)+'</span>'
+        +'<b>'+esc(c.name)+'</b>'+(pri!=null?'<span class="chip">優先 '+pri+'</span>':'')
+        +'<span class="ovb chip">'+esc(ovLabel(cur.o))+(cur.st?'・'+esc(cur.st):'')+'</span></button>';
+    }).join('');
+    return '<div class="todo"><div class="ttl">次の目標の候補（要介入でまだ取り組んでいない項目）</div>'
+      +(rows||'<div class="none">要介入の項目は、すべて目標に取り上げ済みです。</div>')+'</div>';
   }
   function nodeHtml(kind, id, inner, sel, extraCls){
     var j=st(kind,id), gs=goalsOf(kind,id);
@@ -385,7 +440,7 @@ svg.ic{width:14px; height:14px; flex:none}
       h+='<div class="col c2"><div class="colttl">中項目（掘り下げる点）</div>';
       var cg=goalsOf('cat', cat.key);
       if(cg.length) h+='<div class="dnbox"><div class="ttl">'+IC.done+'これまでの取り組み（'+esc(cat.name)+'）</div>'
-        +'<div class="gls full">'+goalLines(cg, 0, S.mid)+'</div></div>';
+        +flowHtml(cg, cat.key)+'<div class="gls full">'+goalLines(cg, 0, S.mid)+'</div></div>';
       cat.mids.forEach(function(m){
         h+=nodeHtml('mid', cat.key+'/'+m.id, '<div class="nm">'+esc(m.name)+'<span class="cnt">'+m.smalls.length+'</span></div>', S.mid===m.id);
       });
@@ -394,7 +449,9 @@ svg.ic{width:14px; height:14px; flex:none}
     if(mid){
       h+='<div class="col c3"><div class="colttl">小項目（情報提供・リスク）</div>';
       mid.smalls.forEach(function(s){
-        h+='<button class="node c3n'+(S.small===s.id?' sel':'')+'" data-k="small" data-id="'+esc(s.id)+'"><div class="nm">'+esc(s.title)+'</div></button>';
+        var ng=(S.judge&&S.judge.simSmall[cat.key+'/'+mid.id+'/'+s.id])||[];
+        h+='<button class="node c3n'+(ng.length?' dn':'')+(S.small===s.id?' sel':'')+'" data-k="small" data-id="'+esc(s.id)+'"><div class="nm">'+esc(s.title)
+          +(ng.length?'<span class="dnb" title="'+esc('目標例に近い過去の目標: '+roundsText(ng))+'">'+IC.done+'近い目標</span>':'')+'</div></button>';
       });
       h+='</div>';
     }
@@ -420,7 +477,9 @@ svg.ic{width:14px; height:14px; flex:none}
   function assessHtml(ord){
     var p=S.person, keys=ord.ranked.concat(ord.rest), nBad=0, nWarn=0;
     var cards=keys.map(function(k, i){
-      var c=findCat(k), pc=(p.cat&&p.cat[k])||{}, lv=ovLevel(pc.o);
+      // 評価・ステージは最新の再評価があればそれを使う（初回からの変化は raLine で示す）
+      var c=findCat(k), pc0=(p.cat&&p.cat[k])||{}, cur=S.judge.cur[k]||{}, pc={o:cur.o||pc0.o, st:cur.st||pc0.st}, lv=ovLevel(pc.o);
+      var gk=goalsOf('cat',k), isTodo=(S.judge.todo||[]).indexOf(k)>=0;
       if(lv===3||lv===4) nBad++; else if(lv===2) nWarn++;
       var probs=(S.judge.prob[k]||[]).filter(function(r){ return r.k!=='pend'; }).slice(0,6);
       var pend=(S.judge.prob[k]||[]).filter(function(r){ return r.k==='pend'; }).length;
@@ -429,18 +488,21 @@ svg.ic{width:14px; height:14px; flex:none}
         +'<button class="asm lv'+lv+(goalsOf('cat',k).length?' dn':'')+(S.cat===k?' sel':'')+'" data-cat="'+esc(k)+'" title="'+esc(c.name)+'を開く">'
         +'<div class="hd">'+(pri!=null?'<span class="pr">'+pri+'</span>':'')+'<b>'+esc(c.name)+'</b>'
         +'<span class="ovb">'+esc(ovLabel(pc.o))+'</span>'
-        +(pc.st?'<span class="st">'+esc(pc.st)+'</span>':'')+doneBadge(goalsOf('cat',k))+'</div>'
+        +(pc.st?'<span class="st">'+esc(pc.st)+'</span>':'')+doneBadge(gk)
+        +(isTodo?'<span class="chip todoc" title="要介入でまだ目標に取り上げていない">未取組</span>':'')+'</div>'
         +'<div class="probs">'+probs.map(function(r){
           var cls=r.k==='it'?'prob':r.k==='lab'?'hi':r.k==='dis'?'dis':'';
           return '<span class="chip '+cls+'">'+esc(r.t)+'</span>';
         }).join('')+(pend?'<span class="chip pend">要聴取 '+pend+'件</span>':'')+'</div>'
-        +(goalsOf('cat',k).length?'<div class="gls">'+goalLines(goalsOf('cat',k), 3)+'</div>':'')+'</button>';
+        +raLine(k)
+        +(gk.length?flowHtml(gk,k)+'<div class="gls">'+goalLines(gk, 1)+'</div>':'')+'</button>';
     }).join('');
     var gAll=S.judge.goals||[], nCat=Object.keys(S.judge.done||{}).length;
     var other=S.judge.other||[];
     return '<div class="col c0"><div class="colttl">生活習慣アセスメント（概略）</div>'
       +'<div class="asmsum">問題あり <b>'+nBad+'</b> 項目・注意 '+nWarn+' 項目'
       +(gAll.length?'<br>取り組み <span class="dnb">'+IC.done+gAll.length+' 件</span> '+nCat+' 項目（'+esc(roundsText(gAll))+'）':'')+'</div>'
+      +todoHtml()
       +(other.length?'<div class="dnbox"><div class="ttl">'+IC.done+'その他の取り組み（10項目外）</div><div class="gls">'+goalLines(other,0)+'</div></div>':'')
       +cards+'</div>';
   }
@@ -458,13 +520,18 @@ svg.ic{width:14px; height:14px; flex:none}
         +(sm.figCap?'<div class="cap">'+esc(sm.figCap)+'</div>':'')+'</div></div>';
     }
     h+='<div class="sec"><div class="sechd">目標例（行動変容ステージ別）<button class="btn sm" data-copy="goals" data-lbl="1">'+IC.copy+'このステージを全部</button></div>';
+    var sim=(S.judge&&S.judge.sim[cat.key+'/'+mid.id+'/'+sm.id])||{};
     h+='<div class="tabs" role="tablist">'+STAGES.map(function(s){
-      return '<button class="tab'+(s===stage?' on':'')+'" role="tab" aria-selected="'+(s===stage)+'" data-stage="'+s+'">'+s+(s===pStage?'<span class="me">対象者</span>':'')+'</button>';
+      return '<button class="tab'+(s===stage?' on':'')+'" role="tab" aria-selected="'+(s===stage)+'" data-stage="'+s+'">'+s+(s===pStage?'<span class="me">対象者</span>':'')
+        +(sim[s]?'<span class="dn" title="過去の目標に近い目標例あり"></span>':'')+'</button>';
     }).join('')+'</div>';
     h+='<p class="stagenote">'+esc(STAGE_NOTE[stage])+'</p>';
     var gs=(sm.goals&&sm.goals[stage])||[];
     h+=gs.length?'<ul class="goals">'+gs.map(function(g,i){
-      return '<li><span>'+esc(g)+'</span><button class="btn sm" data-copy="goal" data-i="'+i+'" title="この目標をコピー">'+IC.copy+'</button></li>';
+      var near=(sim[stage]&&sim[stage][i])||[], last=near[near.length-1];
+      var tag=last?'<span class="nearc gst '+stCls(last.st)+'" title="'+esc(near.map(function(g){ return '第'+g.no+'回 '+g.t+'（'+stLabel(g.st)+'）'; }).join('\n'))+'">'
+        +esc(roundsText(near))+'で実施・'+esc(stLabel(last.st))+'</span>':'';
+      return '<li'+(last?' class="near"':'')+'><span>'+esc(g)+'</span>'+tag+'<button class="btn sm" data-copy="goal" data-i="'+i+'" title="この目標をコピー">'+IC.copy+'</button></li>';
     }).join('')+'</ul>':'<div class="empty">このステージの目標例はまだありません。</div>';
     h+='</div>';
     if(sm.sources&&sm.sources.length){
@@ -526,7 +593,7 @@ svg.ic{width:14px; height:14px; flex:none}
       return;
     }
     if(t){ S.stage=t.dataset.stage; render(); return; }
-    var a=e.target.closest('.asm');
+    var a=e.target.closest('.asm, .tdr');
     if(a){ var k0=a.dataset.cat; if(S.cat!==k0){ S.cat=k0; S.mid=S.small=null; S.stage=null; render(); } return; }
     if(!n) return;
     var kind=n.dataset.k, id=n.dataset.id;
