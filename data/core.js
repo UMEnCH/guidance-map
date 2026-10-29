@@ -232,7 +232,7 @@ var GM = (function(){
     Object.keys(A.set).forEach(function(x){ if(B.set[x]) m++; });
     return 2*m/(A.n+B.n);
   };
-  GM.SIM_TH = 0.4;
+  GM.SIM_TH = 0.35;
   /* 面談の目標は1文に複数の取り組みを書くことが多いので、文（。や長い読点の区切り）ごとにも比べて高い方を取る */
   GM.goalScore = function(goal, ex){
     var parts=String(goal||'').split(/[。．\n]|、(?=[^、]{8,})/).map(function(x){ return x.trim(); })
