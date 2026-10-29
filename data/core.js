@@ -215,7 +215,8 @@ var GM = (function(){
    * 「週◯日以上」など目標例に共通の言い回しは数えない。同じ大項目の中だけで比べる。 */
   var SYN=[[/スマートフォン/g,'スマホ'],[/休肝日/g,'飲まない日'],[/ウォーキング|散歩/g,'歩く'],
     [/ごはん|ご飯|白米/g,'主食'],[/測って|計って|はかって|測る|計る|はかる/g,'測'],
-    [/エアロバイク|自転車|ジョギング|水泳/g,'運動']];
+    [/エアロバイク|自転車|ジョギング|水泳/g,'運動'],[/落とす|減らす|控える|控えめにする/g,'減らす'],
+    [/摂取頻度|頻度|回数/g,'回数']];
   var STOP={}; ('する ます して った てい いる こと もの ない うに よう から まで には では にす を0 0分 0回 0日 '
     +'週0 日以 以上 上に る日 日を 毎日 今週 今夜 始め める 続け ける か月 1か を週 とる').split(' ').forEach(function(b){ STOP[b]=1; });
   function bigrams(t){
@@ -232,6 +233,12 @@ var GM = (function(){
     return 2*m/(A.n+B.n);
   };
   GM.SIM_TH = 0.4;
+  /* 面談の目標は1文に複数の取り組みを書くことが多いので、文（。や長い読点の区切り）ごとにも比べて高い方を取る */
+  GM.goalScore = function(goal, ex){
+    var parts=String(goal||'').split(/[。．\n]|、(?=[^、]{8,})/).map(function(x){ return x.trim(); })
+      .filter(function(x){ return x.length>=4; });
+    return [goal].concat(parts).reduce(function(m, x){ return Math.max(m, GM.goalSim(x, ex)); }, 0);
+  };
   /* 小項目の目標例ごとに、近い過去の目標を探す（res.sim['大項目/中項目/小項目'][ステージ][i] = [目標]）。
    * res.simSmall['大項目/中項目/小項目'] … どれかの目標例に近い過去の目標があれば その目標の配列 */
   GM.judgeSimilar = function(res){
@@ -242,7 +249,7 @@ var GM = (function(){
         var key=cat.key+'/'+m.id+'/'+sm.id, hit=[];
         Object.keys(sm.goals||{}).forEach(function(stg){
           (sm.goals[stg]||[]).forEach(function(ex, i){
-            var near=gs.filter(function(g){ return GM.goalSim(g.t, ex)>=GM.SIM_TH; });
+            var near=gs.filter(function(g){ return GM.goalScore(g.t, ex)>=GM.SIM_TH; });
             if(!near.length) return;
             ((res.sim[key]=res.sim[key]||{})[stg]=res.sim[key][stg]||{})[i]=near;
             near.forEach(function(g){ if(hit.indexOf(g)<0) hit.push(g); });
